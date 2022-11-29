@@ -1,8 +1,7 @@
 package main
 
 import (
-	"example.com/m/v2/cart"
-	"example.com/m/v2/cartItem"
+	"example.com/m/v2/service"
 	"fmt"
 )
 
@@ -15,13 +14,13 @@ func main() {
 
 		switch inputNumber {
 		case 1:
-			cart.AddCart()
+			service.AddCart()
 		case 2:
-			cartItem.AddCartItem()
+			service.AddCartItem()
 		case 3:
-			cartItem.DeleteCartItem()
+			service.DeleteCartItem()
 		case 4:
-			cartItem.ShowCartItems()
+			service.ShowCartItems()
 		default:
 			fmt.Println("This case is not exist")
 		}

@@ -1,8 +1,8 @@
-package cartItem
+package service
 
 import (
-	"example.com/m/v2/database"
-	cartStruct "example.com/m/v2/struct"
+	"example.com/m/v2/database/localstorage"
+	cartStruct "example.com/m/v2/domain"
 	"fmt"
 )
 
@@ -12,10 +12,10 @@ func AddCartItem() {
 	fmt.Println("Input your cart id")
 	fmt.Scanf("%d\n", &addItem.CartID)
 
-	_, ok := database.GetCart(addItem.CartID)
+	_, ok := localstorage.GetCart(addItem.CartID)
 	if !ok {
 		fmt.Println("Cart not found")
-		break
+		return
 	}
 	for addItem.Name == "" {
 		fmt.Println("Input your product name")
@@ -33,12 +33,7 @@ func AddCartItem() {
 		}
 	}
 
-	database.PutMaxIDItemMapIncrement()
-	addItem.Id = database.GetMaxIDItemMapIncrement()
-
-	database.PostItem(addItem.CartID, addItem)
-
-	value, ok := database.GetCartItems(addItem.CartID)
+	value, ok := localstorage.PostItem(addItem.CartID, addItem)
 
 	fmt.Printf("Item added to cart %+v\n", value)
 	addItem = cartStruct.Item{}
@@ -57,9 +52,7 @@ func DeleteCartItem() {
 		fmt.Scanf("%d\n", &inputItemID)
 	}
 
-	database.DeleteItem(inputCartID, inputItemID)
-
-	value, _ := database.GetCartItems(inputCartID)
+	value, _ := localstorage.DeleteItem(inputCartID, inputItemID)
 
 	fmt.Printf("Item removed from cart %+v\n", value)
 }
@@ -71,7 +64,7 @@ func ShowCartItems() {
 		fmt.Scanf("%d\n", &inputCartID)
 	}
 
-	value, _ := database.GetCartItems(inputCartID)
+	value, _ := localstorage.GetCartItems(inputCartID)
 
 	fmt.Printf("Your cart %+v\n", value)
 }
