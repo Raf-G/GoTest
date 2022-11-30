@@ -7,6 +7,5 @@ import (
 
 func AddCart() {
 	cart := localstorage.PostCart()
-
 	fmt.Printf("Cart added %+v \n", cart)
 }

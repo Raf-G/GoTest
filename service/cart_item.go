@@ -2,12 +2,12 @@ package service
 
 import (
 	"example.com/m/v2/database/localstorage"
-	cartStruct "example.com/m/v2/domain"
+	"example.com/m/v2/domain"
 	"fmt"
 )
 
 func AddCartItem() {
-	var addItem cartStruct.Item
+	var addItem domain.Item
 
 	fmt.Println("Input your cart id")
 	fmt.Scanf("%d\n", &addItem.CartID)
@@ -36,12 +36,12 @@ func AddCartItem() {
 	value, ok := localstorage.PostItem(addItem.CartID, addItem)
 
 	fmt.Printf("Item added to cart %+v\n", value)
-	addItem = cartStruct.Item{}
+	addItem = domain.Item{}
 }
 
 func DeleteCartItem() {
-	var inputCartID cartStruct.CartID
-	var inputItemID cartStruct.ItemID
+	var inputCartID domain.CartID
+	var inputItemID domain.ItemID
 	for inputCartID == 0 {
 		fmt.Println("Input cart id")
 		fmt.Scanf("%d\n", &inputCartID)
@@ -57,14 +57,20 @@ func DeleteCartItem() {
 	fmt.Printf("Item removed from cart %+v\n", value)
 }
 
+func printMessage(message localstorage.MessageShowCartItems) {
+	message.ShowCartItemsMessage()
+}
+
 func ShowCartItems() {
-	var inputCartID cartStruct.CartID
+	var inputCartID domain.CartID
 	for inputCartID == 0 {
-		fmt.Println("Input cart id")
+		var text localstorage.ItemsText = "Input cart id"
+		printMessage(text)
 		fmt.Scanf("%d\n", &inputCartID)
 	}
 
 	value, _ := localstorage.GetCartItems(inputCartID)
-
-	fmt.Printf("Your cart %+v\n", value)
+	var msg = value
+	printMessage(msg)
+	//fmt.Printf("Your cart %+v\n", value)
 }

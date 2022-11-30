@@ -21,6 +21,8 @@ func main() {
 			service.DeleteCartItem()
 		case 4:
 			service.ShowCartItems()
+		case 5:
+			service.ShowCartItems()
 		default:
 			fmt.Println("This case is not exist")
 		}
