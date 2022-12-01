@@ -33,7 +33,7 @@ func AddCartItem() {
 		}
 	}
 
-	value, ok := localstorage.PostItem(addItem.CartID, addItem)
+	value, _ := localstorage.PostItem(addItem.CartID, addItem)
 
 	fmt.Printf("Item added to cart %+v\n", value)
 	addItem = domain.Item{}
