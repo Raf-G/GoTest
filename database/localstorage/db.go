@@ -1,8 +1,9 @@
 package localstorage
 
 import (
-	"example.com/m/v2/domain"
 	"fmt"
+
+	"example.com/m/v2/domain"
 )
 
 type ItemByIDMap map[domain.ItemID]domain.Item

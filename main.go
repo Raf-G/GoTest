@@ -1,8 +1,9 @@
 package main
 
 import (
-	"example.com/m/v2/service"
 	"fmt"
+
+	"example.com/m/v2/service"
 )
 
 func main() {

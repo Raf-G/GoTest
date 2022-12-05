@@ -1,9 +1,10 @@
 package service
 
 import (
+	"fmt"
+
 	"example.com/m/v2/database/localstorage"
 	"example.com/m/v2/domain"
-	"fmt"
 )
 
 func AddCartItem() {
@@ -72,5 +73,4 @@ func ShowCartItems() {
 	value, _ := localstorage.GetCartItems(inputCartID)
 	var msg = value
 	printMessage(msg)
-	//fmt.Printf("Your cart %+v\n", value)
 }
