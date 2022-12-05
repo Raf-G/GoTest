@@ -1,0 +1,15 @@
+image: golang:1.18
+
+stages:
+  - testing
+
+run-tests:
+  stage: testing
+  script:
+    - go test -v ./...
+
+run-linter:
+  stage: testing
+  image: golangci/golangci-lint:v1.50.1
+  script:
+    - golangci-lint run
