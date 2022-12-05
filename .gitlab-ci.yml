@@ -13,3 +13,4 @@ run-linter:
   image: golangci/golangci-lint:v1.50.1
   script:
     - golangci-lint run
+
