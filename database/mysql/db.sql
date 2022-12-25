@@ -1,7 +1,7 @@
 -- Struct table `users`
 CREATE TABLE `users` (
-    `id` int(6) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `login` char(255) COLLATE NOT NULL,
+    `id` int(6) UNSIGNED NOT NULL,
+    `login` char(255) NOT NULL,
     `surname` char(255) NOT NULL,
     `name` char(255) NOT NULL,
     `role` tinyint(5) UNSIGNED DEFAULT NULL
@@ -11,14 +11,10 @@ ALTER TABLE `users`
     ADD PRIMARY KEY (`id`),
     ADD KEY `role` (`role`);
 
-ALTER TABLE `users`
-    ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role`) REFERENCES `roles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-    COMMIT;
-
 -- Struct table `roles`
 CREATE TABLE `roles` (
-    `id` tinyint(5) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` char(255) COLLATE NOT NULL
+    `id` tinyint(5) UNSIGNED NOT NULL,
+    `name` char(255) NOT NULL
 );
 
 ALTER TABLE `roles`
@@ -28,9 +24,9 @@ ALTER TABLE `roles`
 
 -- Struct table `products`
 CREATE TABLE `products` (
-    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` char(255) COLLATE NOT NULL,
-    `description` text COLLATE DEFAULT NULL,
+    `id` int(10) UNSIGNED NOT NULL,
+    `name` char(255) NOT NULL,
+    `description` text DEFAULT NULL,
     `price` double DEFAULT NULL
 );
 
@@ -39,10 +35,10 @@ ALTER TABLE `products`
 
 -- Struct table `reviews`
 CREATE TABLE `reviews` (
-    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` int(10) UNSIGNED NOT NULL,
     `user_id` int(10) UNSIGNED NOT NULL,
     `product_id` int(10) UNSIGNED NOT NULL,
-    `description` text COLLATE DEFAULT NULL,
+    `description` text DEFAULT NULL,
     `grade` smallint(6) DEFAULT NULL
 );
 
@@ -51,7 +47,7 @@ ALTER TABLE `reviews`
 
 -- Struct table `products_basket`
 CREATE TABLE `products_basket` (
-    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` int(10) UNSIGNED NOT NULL,
     `basket_id` int(10) UNSIGNED DEFAULT NULL,
     `product_id` int(10) UNSIGNED DEFAULT NULL,
     `count` int(10) UNSIGNED NOT NULL
@@ -64,7 +60,7 @@ ALTER TABLE `products_basket`
 
 -- Struct table `baskets`
 CREATE TABLE `baskets` (
-    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` int(10) UNSIGNED NOT NULL,
     `user_id` int(10) UNSIGNED NOT NULL
 );
 
@@ -73,7 +69,7 @@ ALTER TABLE `baskets`
 
 -- Struct table `products_order`
 CREATE TABLE `products_order` (
-    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` int(10) UNSIGNED NOT NULL,
     `order_id` int(10) UNSIGNED DEFAULT NULL,
     `product_id` int(10) UNSIGNED DEFAULT NULL,
     `count` int(10) UNSIGNED NOT NULL,
@@ -87,7 +83,7 @@ ALTER TABLE `products_order`
 
 -- Struct table `orders`
 CREATE TABLE `orders` (
-    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `id` int(10) UNSIGNED NOT NULL,
     `user_id` int(10) UNSIGNED NOT NULL,
     `status` int(10) UNSIGNED DEFAULT NULL
 );
@@ -99,8 +95,8 @@ ALTER TABLE `orders`
 
 -- Struct table `status`
 CREATE TABLE `status` (
-    `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name` char(255) COLLATE DEFAULT NULL
+    `id` int(10) UNSIGNED NOT NULL,
+    `name` char(255) DEFAULT NULL
 );
 
 ALTER TABLE `status`
@@ -122,11 +118,11 @@ ALTER TABLE `orders`
 -- --------------------------------------------------------------------------------
 -- Default data 
 
-INSERT INTO `users` (`id`, `surname`, `name`, `role`) VALUES
-    (1, 'usergasf', 'brhtrh', 1),
-    (2, 'ivan', 'totot', 1),
-    (3, 'ivan2', 'totot2', 2),
-    (4, 'ivan3', 'totot3', 3);
+INSERT INTO `users` (`id`,`login`, `surname`, `name`, `role`) VALUES
+    (1,'tes1', 'usergasf', 'brhtrh', 1),
+    (2, 'tes2', 'ivan', 'totot', 1),
+    (3, 'tes3', 'ivan2', 'totot2', 2),
+    (4, 'tes4', 'ivan3', 'totot3', 3);
 
 INSERT INTO `roles` (`id`, `name`) VALUES
     (1, 'administrator'),
