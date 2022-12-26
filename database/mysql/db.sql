@@ -1,4 +1,5 @@
 -- Struct table `users`
+DROP TABLE IF EXISTS  users;
 CREATE TABLE `users` (
     `id` int(6) UNSIGNED NOT NULL,
     `login` char(255) NOT NULL,
@@ -12,6 +13,7 @@ ALTER TABLE `users`
     ADD KEY `role` (`role`);
 
 -- Struct table `roles`
+DROP TABLE IF EXISTS  roles;
 CREATE TABLE `roles` (
     `id` tinyint(5) UNSIGNED NOT NULL,
     `name` char(255) NOT NULL
@@ -22,18 +24,8 @@ ALTER TABLE `roles`
     ADD UNIQUE KEY `name` (`name`),
     ADD KEY `id` (`id`);
 
--- Struct table `products`
-CREATE TABLE `products` (
-    `id` int(10) UNSIGNED NOT NULL,
-    `name` char(255) NOT NULL,
-    `description` text DEFAULT NULL,
-    `price` double DEFAULT NULL
-);
-
-ALTER TABLE `products`
-    ADD PRIMARY KEY (`id`);
-
 -- Struct table `reviews`
+DROP TABLE IF EXISTS  reviews;
 CREATE TABLE `reviews` (
     `id` int(10) UNSIGNED NOT NULL,
     `user_id` int(10) UNSIGNED NOT NULL,
@@ -45,7 +37,9 @@ CREATE TABLE `reviews` (
 ALTER TABLE `reviews`
     ADD PRIMARY KEY (`id`);
 
+
 -- Struct table `products_basket`
+DROP TABLE IF EXISTS  products_basket;
 CREATE TABLE `products_basket` (
     `id` int(10) UNSIGNED NOT NULL,
     `basket_id` int(10) UNSIGNED DEFAULT NULL,
@@ -59,6 +53,7 @@ ALTER TABLE `products_basket`
     ADD KEY `product_id` (`product_id`);
 
 -- Struct table `baskets`
+DROP TABLE IF EXISTS  baskets;
 CREATE TABLE `baskets` (
     `id` int(10) UNSIGNED NOT NULL,
     `user_id` int(10) UNSIGNED NOT NULL
@@ -68,6 +63,7 @@ ALTER TABLE `baskets`
     ADD PRIMARY KEY (`id`);
 
 -- Struct table `products_order`
+DROP TABLE IF EXISTS  products_order;
 CREATE TABLE `products_order` (
     `id` int(10) UNSIGNED NOT NULL,
     `order_id` int(10) UNSIGNED DEFAULT NULL,
@@ -82,6 +78,7 @@ ALTER TABLE `products_order`
     ADD KEY `product_id` (`product_id`);
 
 -- Struct table `orders`
+DROP TABLE IF EXISTS  orders;
 CREATE TABLE `orders` (
     `id` int(10) UNSIGNED NOT NULL,
     `user_id` int(10) UNSIGNED NOT NULL,
@@ -94,6 +91,7 @@ ALTER TABLE `orders`
     ADD KEY `id` (`id`);
 
 -- Struct table `status`
+DROP TABLE IF EXISTS  status;
 CREATE TABLE `status` (
     `id` int(10) UNSIGNED NOT NULL,
     `name` char(255) DEFAULT NULL
@@ -102,6 +100,18 @@ CREATE TABLE `status` (
 ALTER TABLE `status`
     ADD PRIMARY KEY (`id`),
     ADD KEY `id` (`id`);
+
+-- Struct table `products`
+DROP TABLE IF EXISTS  products;
+CREATE TABLE `products` (
+    `id` int(10) UNSIGNED NOT NULL,
+    `name` char(255) NOT NULL,
+    `description` text DEFAULT NULL,
+    `price` double DEFAULT NULL
+);
+
+ALTER TABLE `products`
+    ADD PRIMARY KEY (`id`);
 
 -- --------------------------------------------------------------------------------
 ALTER TABLE `products_basket`
