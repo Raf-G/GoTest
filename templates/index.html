@@ -6,13 +6,14 @@
 </head>
 <body>
 <table>
-    <thead><th>Id</th><th>login</th><th>surname</th><th>name</th><th>role</th></thead>
+    <thead><th>Id</th><th>login</th><th>surname</th><th>name</th><th>Password</th><th>role</th></thead>
     {{range . }}
     <tr>
-        <td>{{.Id}}</td>
+        <td>{{.ID}}</td>
         <td>{{.Login}}</td>
         <td>{{.Surname}}</td>
         <td>{{.Name}}</td>
+        <td>{{.Password}}</td>
         <td>{{.Role}}</td>
     </tr>
     {{end}}

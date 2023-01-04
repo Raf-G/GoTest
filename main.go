@@ -2,45 +2,16 @@ package main
 
 import (
 	"database/sql"
+	"example.com/m/v2/handlers"
+	"example.com/m/v2/repository"
+	"example.com/m/v2/service"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"html/template"
 	"log"
 	"net/http"
 )
 
-type Users struct {
-	Id      int
-	Login   string
-	Surname string
-	Name    string
-	Role    int
-}
-
 var database *sql.DB
-
-func GetUsers(w http.ResponseWriter, r *http.Request) {
-
-	rows, err := database.Query("select * from toy_shop.users")
-	if err != nil {
-		log.Println(err)
-	}
-	defer rows.Close()
-	users := []Users{}
-
-	for rows.Next() {
-		p := Users{}
-		err := rows.Scan(&p.Id, &p.Login, &p.Surname, &p.Name, &p.Role)
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-		users = append(users, p)
-	}
-
-	tmpl, _ := template.ParseFiles("templates/index.html")
-	tmpl.Execute(w, users)
-}
 
 func main() {
 
@@ -51,9 +22,15 @@ func main() {
 	}
 	database = db
 	defer db.Close()
-	http.HandleFunc("/", GetUsers)
+
+	usersRepository := repository.NewUserRepository(db)
+	usersService := service.NewUserService(usersRepository)
+	usersHandler := handlers.NewUserHandler(usersService)
+
+	http.HandleFunc("/", usersHandler.GetUsers)
 
 	fmt.Println("Server is listening...")
+	fmt.Println("localhost:8181")
 	http.ListenAndServe(":8181", nil)
 
 	//var inputNumber int

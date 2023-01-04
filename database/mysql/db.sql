@@ -1,147 +1,132 @@
--- Struct table `users`
-DROP TABLE IF EXISTS  users;
-CREATE TABLE `users` (
-    `id` int(6) UNSIGNED NOT NULL,
-    `login` char(255) NOT NULL,
-    `surname` char(255) NOT NULL,
-    `name` char(255) NOT NULL,
-    `role` tinyint(5) UNSIGNED DEFAULT NULL
-);
+-- Delete tables
+DROP TABLE IF EXISTS products_baskets;
+DROP TABLE IF EXISTS baskets;
+DROP TABLE IF EXISTS reviews;
+DROP TABLE IF EXISTS products_orders;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS statuses;
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS roles;
 
-ALTER TABLE `users`
-    ADD PRIMARY KEY (`id`),
-    ADD KEY `role` (`role`);
+-- Struct table `users`
+CREATE TABLE `users`
+(
+    `id`       int UNSIGNED     NOT NULL PRIMARY KEY,
+    `login`    VARCHAR(50)      NOT NULL,
+    `surname`  VARCHAR(100)     NOT NULL,
+    `name`     VARCHAR(100)     NOT NULL,
+    `password` VARCHAR(50)      NOT NULL,
+    `role_id`  tinyint UNSIGNED NOT NULL
+);
 
 -- Struct table `roles`
-DROP TABLE IF EXISTS  roles;
-CREATE TABLE `roles` (
-    `id` tinyint(5) UNSIGNED NOT NULL,
-    `name` char(255) NOT NULL
+CREATE TABLE `roles`
+(
+    `id`   tinyint UNSIGNED NOT NULL PRIMARY KEY,
+    `name` VARCHAR(50)      NOT NULL
 );
-
-ALTER TABLE `roles`
-    ADD PRIMARY KEY (`id`),
-    ADD UNIQUE KEY `name` (`name`),
-    ADD KEY `id` (`id`);
 
 -- Struct table `reviews`
-DROP TABLE IF EXISTS  reviews;
-CREATE TABLE `reviews` (
-    `id` int(10) UNSIGNED NOT NULL,
-    `user_id` int(10) UNSIGNED NOT NULL,
-    `product_id` int(10) UNSIGNED NOT NULL,
+CREATE TABLE `reviews`
+(
+    `id`          int UNSIGNED NOT NULL PRIMARY KEY,
+    `user_id`     int UNSIGNED NOT NULL,
+    `product_id`  int UNSIGNED NOT NULL,
     `description` text DEFAULT NULL,
-    `grade` smallint(6) DEFAULT NULL
+    `grade`       smallint     NOT NULL
 );
 
-ALTER TABLE `reviews`
-    ADD PRIMARY KEY (`id`);
-
-
--- Struct table `products_basket`
-DROP TABLE IF EXISTS  products_basket;
-CREATE TABLE `products_basket` (
-    `id` int(10) UNSIGNED NOT NULL,
-    `basket_id` int(10) UNSIGNED DEFAULT NULL,
-    `product_id` int(10) UNSIGNED DEFAULT NULL,
-    `count` int(10) UNSIGNED NOT NULL
+-- Struct table `products_baskets`
+CREATE TABLE `products_baskets`
+(
+    `id`         int UNSIGNED NOT NULL PRIMARY KEY,
+    `basket_id`  int UNSIGNED NOT NULL,
+    `product_id` int UNSIGNED NOT NULL,
+    `count`      int UNSIGNED NOT NULL
 );
-
-ALTER TABLE `products_basket`
-    ADD PRIMARY KEY (`id`),
-    ADD KEY `basket_id` (`basket_id`),
-    ADD KEY `product_id` (`product_id`);
 
 -- Struct table `baskets`
-DROP TABLE IF EXISTS  baskets;
-CREATE TABLE `baskets` (
-    `id` int(10) UNSIGNED NOT NULL,
-    `user_id` int(10) UNSIGNED NOT NULL
+CREATE TABLE `baskets`
+(
+    `id`      int UNSIGNED NOT NULL PRIMARY KEY,
+    `user_id` int UNSIGNED NOT NULL
 );
 
-ALTER TABLE `baskets`
-    ADD PRIMARY KEY (`id`);
-
--- Struct table `products_order`
-DROP TABLE IF EXISTS  products_order;
-CREATE TABLE `products_order` (
-    `id` int(10) UNSIGNED NOT NULL,
-    `order_id` int(10) UNSIGNED DEFAULT NULL,
-    `product_id` int(10) UNSIGNED DEFAULT NULL,
-    `count` int(10) UNSIGNED NOT NULL,
-    `price` int(10) UNSIGNED NOT NULL
+-- Struct table `products_orders`
+CREATE TABLE `products_orders`
+(
+    `id`         int UNSIGNED NOT NULL PRIMARY KEY,
+    `order_id`   int UNSIGNED NOT NULL,
+    `product_id` int UNSIGNED NOT NULL,
+    `count`      int UNSIGNED NOT NULL,
+    `price`      int UNSIGNED NOT NULL
 );
-
-ALTER TABLE `products_order`
-    ADD PRIMARY KEY (`id`),
-    ADD KEY `order_id` (`order_id`),
-    ADD KEY `product_id` (`product_id`);
 
 -- Struct table `orders`
-DROP TABLE IF EXISTS  orders;
-CREATE TABLE `orders` (
-    `id` int(10) UNSIGNED NOT NULL,
-    `user_id` int(10) UNSIGNED NOT NULL,
-    `status` int(10) UNSIGNED DEFAULT NULL
+CREATE TABLE `orders`
+(
+    `id`        int UNSIGNED NOT NULL PRIMARY KEY,
+    `user_id`   int UNSIGNED NOT NULL,
+    `status_id` int UNSIGNED NOT NULL
 );
-
-ALTER TABLE `orders`
-    ADD PRIMARY KEY (`id`),
-    ADD KEY `status` (`status`),
-    ADD KEY `id` (`id`);
 
 -- Struct table `status`
-DROP TABLE IF EXISTS  status;
-CREATE TABLE `status` (
-    `id` int(10) UNSIGNED NOT NULL,
-    `name` char(255) DEFAULT NULL
+CREATE TABLE statuses
+(
+    `id`   int UNSIGNED NOT NULL PRIMARY KEY,
+    `name` VARCHAR(50)  NOT NULL
 );
-
-ALTER TABLE `status`
-    ADD PRIMARY KEY (`id`),
-    ADD KEY `id` (`id`);
 
 -- Struct table `products`
-DROP TABLE IF EXISTS  products;
-CREATE TABLE `products` (
-    `id` int(10) UNSIGNED NOT NULL,
-    `name` char(255) NOT NULL,
+CREATE TABLE `products`
+(
+    `id`          int UNSIGNED NOT NULL PRIMARY KEY,
+    `name`        VARCHAR(100) NOT NULL,
     `description` text DEFAULT NULL,
-    `price` double DEFAULT NULL
+    `price`       int  DEFAULT NULL
 );
 
-ALTER TABLE `products`
-    ADD PRIMARY KEY (`id`);
-
 -- --------------------------------------------------------------------------------
-ALTER TABLE `products_basket`
-    ADD CONSTRAINT `products_basket_ibfk_1` FOREIGN KEY (`basket_id`) REFERENCES `baskets` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-    ADD CONSTRAINT `products_basket_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `users`
+    ADD CONSTRAINT `fk_users_role_id_roles_id` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`);
 
-ALTER TABLE `products_order`
-    ADD CONSTRAINT `products_order_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-    ADD CONSTRAINT `products_order_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE `reviews`
+    ADD CONSTRAINT `fk_reviews_user_id_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    ADD CONSTRAINT `fk_reviews_product_id_products_id` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
+
+ALTER TABLE `products_baskets`
+    ADD CONSTRAINT `products_baskets_basket_id_baskets_id` FOREIGN KEY (`basket_id`) REFERENCES `baskets` (`id`),
+    ADD CONSTRAINT `products_baskets_product_id_products_id` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
+
+ALTER TABLE `baskets`
+    ADD CONSTRAINT `baskets_user_id_users_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+ALTER TABLE `products_orders`
+    ADD CONSTRAINT `products_orders_order_id_orders_id` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`),
+    ADD CONSTRAINT `products_orders_product_id_products_id` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
 
 ALTER TABLE `orders`
-    ADD CONSTRAINT `order_ibfk_1` FOREIGN KEY (`status`) REFERENCES `status` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+    ADD CONSTRAINT `orders_user_id_users_id` FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    ADD CONSTRAINT `orders_status_id_statuses_id` FOREIGN KEY (`status_id`) REFERENCES statuses (`id`);
 
 -- --------------------------------------------------------------------------------
--- Default data 
+-- Default data
+INSERT INTO `roles` (`id`, `name`)
+VALUES (1, 'administrator'),
+       (2, 'user');
 
-INSERT INTO `users` (`id`,`login`, `surname`, `name`, `role`) VALUES
-    (1,'tes1', 'usergasf', 'brhtrh', 1),
-    (2, 'tes2', 'ivan', 'totot', 1),
-    (3, 'tes3', 'ivan2', 'totot2', 2),
-    (4, 'tes4', 'ivan3', 'totot3', 3);
+INSERT INTO `users` (`id`, `login`, `surname`, `name`, `role_id`, `password`)
+VALUES (1, 'tes1', 'usergasf', 'brhtrh', 1, '12345678'),
+       (2, 'tes2', 'ivan', 'ivanovhich', 1, 'qwerty'),
+       (3, 'tes3', 'ivan2', 'kanovich', 2, 'asdf');
 
-INSERT INTO `roles` (`id`, `name`) VALUES
-    (1, 'administrator'),
-    (2, 'user');
+INSERT INTO `products` (`id`, `name`, `description`, `price`)
+VALUES (1, 'car', 'car is a cool', 100);
 
-INSERT INTO `products` (`id`, `name`, `description`, `price`) VALUES
-    (1, 'car', 'car is a cool', 100);
+INSERT INTO `reviews` (`id`, `user_id`, `product_id`, `description`, `grade`)
+VALUES (1, 1, 1, 'wqwqwq', 3),
+       (2, 1, 1, 'wqwqwq', 1),
+       (3, 1, 1, 'wqwqwq', 5);
 
-INSERT INTO `reviews` (`id`, `user_id`, `product_id`, `description`, `grade`) VALUES
-    (1, 1, 1, 'wqwqwq', 3),
-    (2, 1, 1, 'wqwqwq', 1),
-    (3, 1, 1, 'wqwqwq', 5);
+
