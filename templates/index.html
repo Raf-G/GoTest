@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+</head>
+<body>
+<table>
+    <thead><th>Id</th><th>login</th><th>surname</th><th>name</th><th>role</th></thead>
+    {{range . }}
+    <tr>
+        <td>{{.Id}}</td>
+        <td>{{.Login}}</td>
+        <td>{{.Surname}}</td>
+        <td>{{.Name}}</td>
+        <td>{{.Role}}</td>
+    </tr>
+    {{end}}
+</table>
+</body>
+</html>
