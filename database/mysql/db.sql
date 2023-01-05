@@ -40,7 +40,7 @@ CREATE TABLE `reviews`
 -- Struct table `products_baskets`
 CREATE TABLE `products_baskets`
 (
-    `id`         int UNSIGNED NOT NULL PRIMARY KEY,
+    `id`         int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `basket_id`  int UNSIGNED NOT NULL,
     `product_id` int UNSIGNED NOT NULL,
     `count`      int UNSIGNED NOT NULL
@@ -117,16 +117,25 @@ VALUES (1, 'administrator'),
        (2, 'user');
 
 INSERT INTO `users` (`id`, `login`, `surname`, `name`, `role_id`, `password`)
-VALUES (1, 'tes1', 'usergasf', 'brhtrh', 1, '12345678'),
+VALUES (1, 'admin', 'Nikita', 'Tranche', 1, '12345678'),
        (2, 'tes2', 'ivan', 'ivanovhich', 1, 'qwerty'),
        (3, 'tes3', 'ivan2', 'kanovich', 2, 'asdf');
 
 INSERT INTO `products` (`id`, `name`, `description`, `price`)
-VALUES (1, 'car', 'car is a cool', 100);
+VALUES (1, 'car', 'car is a cool', 100),
+       (2, 'train', 'small train', 150),
+       (3, 'plane', 'aero-bus', 200);
 
 INSERT INTO `reviews` (`id`, `user_id`, `product_id`, `description`, `grade`)
 VALUES (1, 1, 1, 'wqwqwq', 3),
        (2, 1, 1, 'wqwqwq', 1),
        (3, 1, 1, 'wqwqwq', 5);
 
+INSERT INTO `baskets` (`id`, `user_id`)
+VALUES (1, 1),
+       (2, 2);
 
+INSERT INTO `products_baskets` (`basket_id`, `product_id`, `count`)
+VALUES (1, 1, 2),
+       (1, 2, 4),
+       (1, 3, 5);

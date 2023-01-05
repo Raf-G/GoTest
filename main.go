@@ -24,10 +24,24 @@ func main() {
 	defer db.Close()
 
 	usersRepository := repository.NewUserRepository(db)
+	rolesRepository := repository.NewRoleRepository(db)
+
 	usersService := service.NewUserService(usersRepository)
+	rolesService := service.NewRoleService(rolesRepository)
+
 	usersHandler := handlers.NewUserHandler(usersService)
+	rolesHandler := handlers.NewRoleHandler(rolesService)
+
+	//methods for baskets
+	//methods for products
+	//methods for reviews
+	//methods for orders
+	//methods for products_baskets
+	//methods for products_orders
+	//methods for statuses
 
 	http.HandleFunc("/", usersHandler.GetUsers)
+	http.HandleFunc("/roles", rolesHandler.GetRoles)
 
 	fmt.Println("Server is listening...")
 	fmt.Println("localhost:8181")
