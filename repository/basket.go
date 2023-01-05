@@ -16,22 +16,28 @@ func NewBasketRepository(db *sql.DB) *BasketRepository {
 }
 
 func (rep *BasketRepository) GetBasket(userID int) (domain.Basket, error) {
-	rows, err := rep.db.Query("select id from toy_shop.baskets WHERE id = ?", userID)
+
+	rows, err := rep.db.Query("SELECT product_id, count, price * count AS total_price FROM baskets JOIN products_baskets ON baskets.id = products_baskets.basket_id JOIN products ON products_baskets.product_id = products.id WHERE user_id = ?", userID)
+
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return domain.Basket{}, err
 	}
 	defer rows.Close()
 
-	var basket domain.Basket
-	var basketID int
+	basket := domain.Basket{}
+	var products []domain.BasketProduct
 
 	for rows.Next() {
-		err := rows.Scan(&basketID)
+		p := domain.BasketProduct{}
+		err := rows.Scan(&p.ProductID, &p.Count, &p.TotalPrice)
 		if err != nil {
 			fmt.Println(err)
-			return nil, err
+			return domain.Basket{}, err
 		}
+		products = append(products, p)
 	}
-	return basketID, nil
+
+	basket.Products = products
+	return basket, nil
 }

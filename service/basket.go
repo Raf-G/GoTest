@@ -23,7 +23,17 @@ func (cs *BasketService) GetBasket(userID int) (domain.Basket, error) {
 	if err != nil {
 		return basket, errors.Wrap(err, errStr)
 	}
-	basket.ID = c
+	basket = c
+	basket.UserID = userID
+
+	//Calculation all price basket
+	var totalPrice int
+
+	for _, item := range basket.Products {
+		totalPrice += item.TotalPrice
+	}
+
+	basket.TotalPrice = totalPrice
 
 	return basket, nil
 }

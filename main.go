@@ -25,15 +25,19 @@ func main() {
 
 	usersRepository := repository.NewUserRepository(db)
 	rolesRepository := repository.NewRoleRepository(db)
+	basketRepository := repository.NewBasketRepository(db)
+	productsRepository := repository.NewProductRepository(db)
 
 	usersService := service.NewUserService(usersRepository)
 	rolesService := service.NewRoleService(rolesRepository)
+	basketService := service.NewBasketService(basketRepository)
+	productsService := service.NewProductService(productsRepository)
 
 	usersHandler := handlers.NewUserHandler(usersService)
 	rolesHandler := handlers.NewRoleHandler(rolesService)
+	basketHandler := handlers.NewBasketHandler(basketService)
+	productsHandler := handlers.NewProductHandler(productsService)
 
-	//methods for baskets
-	//methods for products
 	//methods for reviews
 	//methods for orders
 	//methods for products_baskets
@@ -42,6 +46,9 @@ func main() {
 
 	http.HandleFunc("/", usersHandler.GetUsers)
 	http.HandleFunc("/roles", rolesHandler.GetRoles)
+	http.HandleFunc("/basket", basketHandler.GetBasket)
+	http.HandleFunc("/product", productsHandler.GetProduct)
+	http.HandleFunc("/products", productsHandler.GetProducts)
 
 	fmt.Println("Server is listening...")
 	fmt.Println("localhost:8181")

@@ -9,10 +9,9 @@ type BasketsService interface {
 }
 
 type BasketProduct struct {
-	ProductID int
-	Name      string
-	Count     int
-	Price     int
+	ProductID  int
+	Count      int
+	TotalPrice int
 }
 
 type Basket struct {

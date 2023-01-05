@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Basket</title>
+</head>
+<body>
+<h1>Basket</h1>
+<p>
+    UserID: {{.UserID}}
+</p>
+<table>
+    <thead><th>ProductID</th><th>Count</th><th>TotalPrice</th></thead>
+    {{range .Products }}
+    <tr>
+        <td>{{.ProductID}}</td>
+        <td>{{.Count}}</td>
+        <td>{{.TotalPrice}}</td>
+    </tr>
+    {{end}}
+</table>
+<p>
+    Total: {{.TotalPrice}}
+</p>
+</body>
+</html>

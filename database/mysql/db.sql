@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS roles;
 -- Struct table `users`
 CREATE TABLE `users`
 (
-    `id`       int UNSIGNED     NOT NULL PRIMARY KEY,
+    `id`       int UNSIGNED     NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `login`    VARCHAR(50)      NOT NULL,
     `surname`  VARCHAR(100)     NOT NULL,
     `name`     VARCHAR(100)     NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE `roles`
 -- Struct table `reviews`
 CREATE TABLE `reviews`
 (
-    `id`          int UNSIGNED NOT NULL PRIMARY KEY,
+    `id`          int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `user_id`     int UNSIGNED NOT NULL,
     `product_id`  int UNSIGNED NOT NULL,
     `description` text DEFAULT NULL,
@@ -133,9 +133,11 @@ VALUES (1, 1, 1, 'wqwqwq', 3),
 
 INSERT INTO `baskets` (`id`, `user_id`)
 VALUES (1, 1),
-       (2, 2);
+       (2, 2),
+       (3, 3);
 
 INSERT INTO `products_baskets` (`basket_id`, `product_id`, `count`)
 VALUES (1, 1, 2),
        (1, 2, 4),
-       (1, 3, 5);
+       (1, 3, 5),
+       (2, 2, 4);
