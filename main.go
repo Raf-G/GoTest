@@ -7,72 +7,77 @@ import (
 	"example.com/m/v2/service"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 )
 
-var database *sql.DB
+type App struct {
+	address string
+	router  *mux.Router
+	db      *sql.DB
+}
 
-func main() {
+func NewApp() App {
+	address := fmt.Sprintf("%s:%d", "localhost", 8181)
 
 	db, err := sql.Open("mysql", "root:root@/toy_shop")
-
 	if err != nil {
 		log.Println(err)
 	}
-	database = db
-	defer db.Close()
 
-	usersRepository := repository.NewUserRepository(db)
-	rolesRepository := repository.NewRoleRepository(db)
-	basketRepository := repository.NewBasketRepository(db)
-	productsRepository := repository.NewProductRepository(db)
+	router := mux.NewRouter()
+	app := App{address, router, db}
+	app.setRouters()
+
+	return app
+}
+
+func (app *App) setRouters() {
+	usersRepository := repository.NewUserRepository(app.db)
+	rolesRepository := repository.NewRoleRepository(app.db)
+	basketRepository := repository.NewBasketRepository(app.db)
+	productsRepository := repository.NewProductRepository(app.db)
+	reviewsRepository := repository.NewReviewRepository(app.db)
 
 	usersService := service.NewUserService(usersRepository)
 	rolesService := service.NewRoleService(rolesRepository)
 	basketService := service.NewBasketService(basketRepository)
 	productsService := service.NewProductService(productsRepository)
+	reviewsService := service.NewReviewService(reviewsRepository)
 
 	usersHandler := handlers.NewUserHandler(usersService)
 	rolesHandler := handlers.NewRoleHandler(rolesService)
 	basketHandler := handlers.NewBasketHandler(basketService)
 	productsHandler := handlers.NewProductHandler(productsService)
+	reviewsHandler := handlers.NewReviewHandler(reviewsService)
 
 	//methods for reviews
 	//methods for orders
-	//methods for products_baskets
-	//methods for products_orders
 	//methods for statuses
 
-	http.HandleFunc("/", usersHandler.GetUsers)
-	http.HandleFunc("/roles", rolesHandler.GetRoles)
-	http.HandleFunc("/basket", basketHandler.GetBasket)
-	http.HandleFunc("/product", productsHandler.GetProduct)
-	http.HandleFunc("/products", productsHandler.GetProducts)
+	app.router.HandleFunc("/api/users", usersHandler.GetUsers).Methods("GET")
+	app.router.HandleFunc("/api/roles", rolesHandler.GetRoles).Methods("GET")
+	app.router.HandleFunc("/api/basket", basketHandler.GetBasket).Methods("GET")
+	app.router.HandleFunc("/api/product", productsHandler.GetProduct).Methods("GET")
+	app.router.HandleFunc("/api/products", productsHandler.GetProducts).Methods("GET")
+	app.router.HandleFunc("/api/review", reviewsHandler.GetReview).Methods("GET")
+	app.router.HandleFunc("/api/reviews-product", reviewsHandler.GetReviewsProduct).Methods("GET")
+}
 
-	fmt.Println("Server is listening...")
-	fmt.Println("localhost:8181")
-	http.ListenAndServe(":8181", nil)
+func (app *App) Run() {
+	log.Println(http.ListenAndServe(app.address, app.router))
+}
 
-	//var inputNumber int
-	//
-	//for {
-	//	fmt.Println("1. Add cart\n2. Add cart item to cart\n3. Remove item from cart\n4. View cart")
-	//	fmt.Scanf("%d\n", &inputNumber)
-	//
-	//	switch inputNumber {
-	//	case 1:
-	//		service.AddCart()
-	//	case 2:
-	//		service.AddCartItem()
-	//	case 3:
-	//		service.DeleteCartItem()
-	//	case 4:
-	//		service.ShowCartItems()
-	//	case 5:
-	//		service.ShowCartItems()
-	//	default:
-	//		fmt.Println("This case is not exist")
-	//	}
-	//}
+func (app *App) Stop() {
+	err := app.db.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func main() {
+	api := NewApp()
+	api.Run()
+	defer api.Stop()
 }

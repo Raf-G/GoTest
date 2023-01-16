@@ -1,8 +1,8 @@
 package handlers
 
 import (
+	"encoding/json"
 	"example.com/m/v2/domain"
-	"html/template"
 	"log"
 	"net/http"
 )
@@ -15,6 +15,35 @@ func NewUserHandler(service domain.UsersService) UserHandlers {
 	return UserHandlers{service}
 }
 
+func (ih *UserHandlers) Add(w http.ResponseWriter, r *http.Request) {
+	var item jsonUser
+
+	err := json.NewDecoder(r.Body).Decode(&item)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "wrong data in request body", 400)
+
+		return
+	}
+
+	newItem, err := ih.service.Add(userFromJSONUser(item))
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+
+	jsonItem := jsonUserFromUser(newItem)
+
+	err = json.NewEncoder(w).Encode(&jsonItem)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+}
+
 func (ch *UserHandlers) GetUsers(w http.ResponseWriter, _ *http.Request) {
 	users, err := ch.service.GetAll()
 	if err != nil {
@@ -23,17 +52,14 @@ func (ch *UserHandlers) GetUsers(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	tmpl, err := template.ParseFiles("templates/index.html")
+	err = json.NewEncoder(w).Encode(users)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	err = tmpl.Execute(w, users) // tmpl.Execute write WriteHeader 200
-	if err != nil {
-		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
+	w.Header().Set("Content-Type", "application/json")
+	return
+
 }

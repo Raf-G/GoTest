@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Reviews</title>
+</head>
+<body>
+<table>
+    <thead>
+    <th>ID</th>
+    <th>UserID</th>
+    <th>ProductID</th>
+    <th>Description</th>
+    <th>Grade</th>
+    </thead>
+    {{range . }}
+    <tr>
+        <td>{{.ID}}</td>
+        <td>{{.UserID}}</td>
+        <td>{{.ProductID}}</td>
+        <td>{{.Description}}</td>
+        <td>{{.Grade}}</td>
+    </tr>
+    {{end}}
+</table>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"example.com/m/v2/domain"
 	"fmt"
@@ -13,6 +14,23 @@ type UserRepository struct {
 
 func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{db}
+}
+
+func (rep *UserRepository) Add(item domain.User) (*domain.User, error) {
+	errStr := "[repository] user not added to the database"
+
+	query := "INSERT INTO `users` (`login`, `name`, `surname`, `password`, `role_id`) VALUES (?, ?, ?, ?, ?)"
+	insertResult, err := rep.db.ExecContext(context.Background(), query, item.Login, item.Name, item.Surname, item.Password, item.Role)
+	if err != nil {
+		log.Fatalf("%s: %s", errStr, err)
+	}
+	id, err := insertResult.LastInsertId()
+	if err != nil {
+		log.Fatalf("%s: %s", errStr, err)
+	}
+	log.Printf("inserted id: %d", id)
+
+	return &item, nil
 }
 
 func (rep *UserRepository) GetUsers() ([]domain.User, error) {
