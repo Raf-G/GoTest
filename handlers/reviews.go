@@ -93,7 +93,7 @@ func (res *ReviewHandlers) GetReview(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	review, err := res.service.GetOneReview(reviewID)
+	review, err := res.service.GetReview(reviewID)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)

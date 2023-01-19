@@ -12,7 +12,7 @@ type ReviewsStorage interface {
 type ReviewsService interface {
 	AddReview(Review) (Review, error)
 	EditReview(Review) (Review, error)
-	GetOneReview(int) (Review, error)
+	GetReview(int) (Review, error)
 	DeleteReview(int) error
 	GetAllReviewsProduct(int) ([]Review, error)
 	GetReviews() ([]Review, error)

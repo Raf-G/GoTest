@@ -45,7 +45,7 @@ func (res *ReviewService) EditReview(review domain.Review) (domain.Review, error
 	return newReview, nil
 }
 
-func (res *ReviewService) GetOneReview(id int) (domain.Review, error) {
+func (res *ReviewService) GetReview(id int) (domain.Review, error) {
 	errStr := fmt.Sprintf("[services] review not fetched")
 	review, err := res.store.GetReview(id)
 	if err != nil {
