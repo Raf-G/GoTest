@@ -93,12 +93,22 @@ func (res *UserHandlers) GetUsers(w http.ResponseWriter, _ *http.Request) {
 func (res *UserHandlers) Edit(w http.ResponseWriter, r *http.Request) {
 	var item jsonUser
 
-	err := json.NewDecoder(r.Body).Decode(&item)
+	vars := mux.Vars(r)
+	userID, err := strconv.Atoi(vars["userId"])
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewDecoder(r.Body).Decode(&item)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "wrong data in request body", 400)
 		return
 	}
+
+	item.ID = userID
 
 	newItem, err := res.service.Edit(userFromJSONUser(item))
 	if err != nil {

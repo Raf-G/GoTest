@@ -59,7 +59,7 @@ func (app *App) setRouters() {
 	app.router.HandleFunc("/api/user", usersHandler.Add).Methods("POST")
 	app.router.HandleFunc("/api/user/{userId}", usersHandler.GetUser).Methods("GET")
 	app.router.HandleFunc("/api/users", usersHandler.GetUsers).Methods("GET")
-	app.router.HandleFunc("/api/user", usersHandler.Edit).Methods("PUT")
+	app.router.HandleFunc("/api/user/{userId}", usersHandler.Edit).Methods("PUT")
 	app.router.HandleFunc("/api/user/{userId}", usersHandler.Delete).Methods("DELETE")
 	//Roles
 	app.router.HandleFunc("/api/role/{roleId}", rolesHandler.GetRole).Methods("GET")
