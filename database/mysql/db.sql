@@ -56,7 +56,7 @@ CREATE TABLE `baskets`
 -- Struct table `products_orders`
 CREATE TABLE `products_orders`
 (
-    `id`         int UNSIGNED NOT NULL PRIMARY KEY,
+    `id`         int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `order_id`   int UNSIGNED NOT NULL,
     `product_id` int UNSIGNED NOT NULL,
     `count`      int UNSIGNED NOT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE statuses
 -- Struct table `products`
 CREATE TABLE `products`
 (
-    `id`          int UNSIGNED NOT NULL PRIMARY KEY,
+    `id`          int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `name`        VARCHAR(100) NOT NULL,
     `description` text DEFAULT NULL,
     `price`       int  DEFAULT NULL

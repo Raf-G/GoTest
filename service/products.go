@@ -14,9 +14,24 @@ func NewProductService(storage domain.ProductsStorage) *ProductService {
 	return &ProductService{storage}
 }
 
-func (cs *ProductService) GetOneProduct(id int) (domain.Product, error) {
+func (res *ProductService) AddProduct(item domain.Product) (domain.Product, error) {
+	errStr := fmt.Sprintf("[services] product not added")
+
+	itemDB, err := res.store.AddProduct(item)
+	if err != nil {
+		return item, errors.Wrap(err, errStr)
+	}
+
+	if itemDB == nil {
+		return item, errors.Wrap(domain.ErrProductNotCreated, errStr)
+	}
+
+	return *itemDB, nil
+}
+
+func (res *ProductService) GetOneProduct(id int) (domain.Product, error) {
 	errStr := fmt.Sprintf("[services] product not fetched")
-	product, err := cs.store.GetProduct(id)
+	product, err := res.store.GetProduct(id)
 	if err != nil {
 		return domain.Product{}, errors.Wrap(err, errStr)
 	}
@@ -24,9 +39,35 @@ func (cs *ProductService) GetOneProduct(id int) (domain.Product, error) {
 	return product, nil
 }
 
-func (cs *ProductService) GetAllProducts() ([]domain.Product, error) {
+func (res *ProductService) EditProduct(product domain.Product) (domain.Product, error) {
+	errStr := fmt.Sprintf("[services] product not edit")
+
+	newProduct, err := res.store.EditProduct(product)
+	if err != nil {
+		return domain.Product{}, errors.Wrap(domain.ErrUserNotFound, errStr)
+	}
+
+	return newProduct, nil
+}
+
+func (res *ProductService) DeleteProduct(productID int) error {
+	errStr := fmt.Sprintf("[services] product (productID %d) not deleted", productID)
+
+	isDeleted, err := res.store.DeleteProduct(productID)
+	if err != nil {
+		return errors.Wrap(err, errStr)
+	}
+
+	if !isDeleted {
+		return errors.Wrap(domain.ErrProductNotFound, errStr)
+	}
+
+	return nil
+}
+
+func (res *ProductService) GetAllProducts() ([]domain.Product, error) {
 	errStr := fmt.Sprintf("[services] products not fetched")
-	c, err := cs.store.GetProducts()
+	c, err := res.store.GetProducts()
 	if err != nil {
 		return nil, errors.Wrap(err, errStr)
 	}
