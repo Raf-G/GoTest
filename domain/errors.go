@@ -22,3 +22,7 @@ var ErrBasketProductNotFound = errors.New("basket product not found")
 //Products
 var ErrProductNotCreated = errors.New("product not created")
 var ErrProductNotFound = errors.New("product not found")
+
+//Reviews
+var ErrReviewNotFound = errors.New("review not found")
+var ErrReviewNotEdited = errors.New("reviews not edited")

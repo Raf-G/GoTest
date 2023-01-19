@@ -76,8 +76,12 @@ func (app *App) setRouters() {
 	app.router.HandleFunc("/api/product/{productId}", productsHandler.DeleteProduct).Methods("DELETE")
 	app.router.HandleFunc("/api/products", productsHandler.GetProducts).Methods("GET")
 	//Reviews
-	app.router.HandleFunc("/api/review", reviewsHandler.GetReview).Methods("GET")
-	app.router.HandleFunc("/api/reviews-product", reviewsHandler.GetReviewsProduct).Methods("GET")
+	app.router.HandleFunc("/api/review", reviewsHandler.AddReview).Methods("POST")
+	app.router.HandleFunc("/api/review/{reviewId}", reviewsHandler.EditReview).Methods("PUT")
+	app.router.HandleFunc("/api/review/{reviewId}", reviewsHandler.GetReview).Methods("GET")
+	app.router.HandleFunc("/api/review/{reviewId}", reviewsHandler.DeleteReview).Methods("DELETE")
+	app.router.HandleFunc("/api/reviews/{productId}", reviewsHandler.GetReviewsProduct).Methods("GET")
+	app.router.HandleFunc("/api/reviews", reviewsHandler.GetReviews).Methods("GET")
 }
 
 func (app *App) Run() {

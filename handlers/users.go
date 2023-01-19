@@ -33,9 +33,6 @@ func (res *UserHandlers) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(201)
-
 	jsonItem := jsonUserFromUser(newItem)
 
 	err = json.NewEncoder(w).Encode(&jsonItem)
@@ -43,6 +40,8 @@ func (res *UserHandlers) Add(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
 }
 
 func (res *UserHandlers) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +68,6 @@ func (res *UserHandlers) GetUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 }
 
 func (res *UserHandlers) GetUsers(w http.ResponseWriter, _ *http.Request) {
