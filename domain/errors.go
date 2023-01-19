@@ -31,3 +31,6 @@ var ErrReviewNotEdited = errors.New("reviews not edited")
 
 //Orders
 var ErrOrderNotCreated = errors.New("order not created")
+
+//Statuses
+var ErrStatusNotFound = errors.New("status not found")

@@ -39,6 +39,7 @@ func (app *App) setRouters() {
 	productsRepository := repository.NewProductRepository(app.db)
 	reviewsRepository := repository.NewReviewRepository(app.db)
 	ordersRepository := repository.NewOrderRepository(app.db)
+	statusesRepository := repository.NewStatusRepository(app.db)
 
 	usersService := service.NewUserService(usersRepository)
 	rolesService := service.NewRoleService(rolesRepository)
@@ -46,6 +47,7 @@ func (app *App) setRouters() {
 	productsService := service.NewProductService(productsRepository)
 	reviewsService := service.NewReviewService(reviewsRepository)
 	ordersService := service.NewOrderService(ordersRepository, basketRepository, productsRepository)
+	satusesService := service.NewStatusService(statusesRepository)
 
 	usersHandler := handlers.NewUserHandler(usersService)
 	rolesHandler := handlers.NewRoleHandler(rolesService)
@@ -53,6 +55,7 @@ func (app *App) setRouters() {
 	productsHandler := handlers.NewProductHandler(productsService)
 	reviewsHandler := handlers.NewReviewHandler(reviewsService)
 	ordersHandler := handlers.NewOrderHandler(ordersService)
+	statusesHandler := handlers.NewStatusHandler(satusesService)
 
 	//Users
 	app.router.HandleFunc("/api/user", usersHandler.Add).Methods("POST")
@@ -86,6 +89,9 @@ func (app *App) setRouters() {
 	app.router.HandleFunc("/api/order/{orderId}", ordersHandler.GetOrder).Methods("GET")
 	app.router.HandleFunc("/api/order/{orderId}", ordersHandler.DeleteOrder).Methods("DELETE")
 	app.router.HandleFunc("/api/orders", ordersHandler.GetOrders).Methods("GET")
+	//Statuses
+	app.router.HandleFunc("/api/status/{statusId}", statusesHandler.GetStatus).Methods("GET")
+	app.router.HandleFunc("/api/statuses", statusesHandler.GetStatuses).Methods("GET")
 }
 
 func (app *App) Run() {
