@@ -30,7 +30,7 @@ func (res *StatusHandlers) GetStatus(w http.ResponseWriter, r *http.Request) {
 	status, err := res.service.GetStatus(statusID)
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -48,7 +48,7 @@ func (res *StatusHandlers) GetStatuses(w http.ResponseWriter, _ *http.Request) {
 	statuses, err := res.service.GetStatuses()
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 

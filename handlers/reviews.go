@@ -96,7 +96,7 @@ func (res *ReviewHandlers) GetReview(w http.ResponseWriter, r *http.Request) {
 	review, err := res.service.GetOneReview(reviewID)
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -136,13 +136,14 @@ func (res *ReviewHandlers) GetReviewsProduct(w http.ResponseWriter, r *http.Requ
 	productID, err := strconv.Atoi(vars["productId"])
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	reviews, err := res.service.GetAllReviewsProduct(productID)
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -160,7 +161,7 @@ func (res *ReviewHandlers) GetReviews(w http.ResponseWriter, _ *http.Request) {
 	reviews, err := res.service.GetReviews()
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 

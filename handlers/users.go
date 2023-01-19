@@ -30,6 +30,7 @@ func (res *UserHandlers) Add(w http.ResponseWriter, r *http.Request) {
 	newItem, err := res.service.Add(userFromJSONUser(item))
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -50,12 +51,14 @@ func (res *UserHandlers) GetUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(vars["userId"])
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	user, err := res.service.GetUser(id)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -74,7 +77,7 @@ func (res *UserHandlers) GetUsers(w http.ResponseWriter, _ *http.Request) {
 	users, err := res.service.GetAll()
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -115,9 +118,6 @@ func (res *UserHandlers) Edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(201)
-
 	jsonItem := jsonUserFromUser(newItem)
 
 	err = json.NewEncoder(w).Encode(&jsonItem)
@@ -126,6 +126,8 @@ func (res *UserHandlers) Edit(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
 }
 
 func (res *UserHandlers) Delete(w http.ResponseWriter, r *http.Request) {
@@ -135,6 +137,7 @@ func (res *UserHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 	err := res.service.Delete(userID)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

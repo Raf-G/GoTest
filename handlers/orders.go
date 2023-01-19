@@ -83,6 +83,7 @@ func (res *OrderHandlers) DeleteOrder(w http.ResponseWriter, r *http.Request) {
 	err = res.service.DeleteOrder(orderID)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -93,7 +94,7 @@ func (res *OrderHandlers) GetOrders(w http.ResponseWriter, _ *http.Request) {
 	orders, err := res.service.GetOrders()
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 

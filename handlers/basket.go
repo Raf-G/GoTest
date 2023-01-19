@@ -21,7 +21,7 @@ func (ch *BasketHandlers) GetBasket(w http.ResponseWriter, _ *http.Request) {
 	basket, err := ch.service.GetBasket(1)
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -48,17 +48,18 @@ func (res *BasketHandlers) AddProductToBasket(w http.ResponseWriter, r *http.Req
 	newItem, err := res.service.AddProductToBasket(item)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(201)
 
 	err = json.NewEncoder(w).Encode(&newItem)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
 }
 
 func (res *BasketHandlers) DeleteProductToBasket(w http.ResponseWriter, r *http.Request) {
@@ -67,12 +68,14 @@ func (res *BasketHandlers) DeleteProductToBasket(w http.ResponseWriter, r *http.
 	id, err := strconv.Atoi(vars["productId"])
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	err = res.service.DeleteProductToBasket(id)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

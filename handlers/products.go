@@ -30,6 +30,7 @@ func (res *ProductHandlers) AddProduct(w http.ResponseWriter, r *http.Request) {
 	newItem, err := res.service.AddProduct(item)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -48,13 +49,14 @@ func (ch *ProductHandlers) GetProduct(w http.ResponseWriter, r *http.Request) {
 	productID, err := strconv.Atoi(vars["productId"])
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	product, err := ch.service.GetOneProduct(productID)
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -71,7 +73,7 @@ func (ch *ProductHandlers) GetProducts(w http.ResponseWriter, _ *http.Request) {
 	products, err := ch.service.GetAllProducts()
 	if err != nil {
 		log.Println(err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
@@ -135,6 +137,7 @@ func (res *ProductHandlers) DeleteProduct(w http.ResponseWriter, r *http.Request
 	err = res.service.DeleteProduct(productID)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
