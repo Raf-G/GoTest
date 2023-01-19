@@ -3,6 +3,7 @@ package domain
 type BasketsStorage interface {
 	AddBasketProduct(BasketProduct) (BasketProduct, error)
 	GetBasketProduct(int, int) (BasketProduct, error)
+	GetBasketProducts(int) ([]BasketProduct, error)
 	EditBasketProduct(BasketProduct) (BasketProduct, error)
 	DeleteBasketProduct(int) (bool, error)
 	GetBasket(int) (Basket, error)

@@ -16,11 +16,11 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{db}
 }
 
-func (rep *UserRepository) Add(item domain.User) (*domain.User, error) {
+func (res *UserRepository) Add(item domain.User) (*domain.User, error) {
 	errStr := "[repository] user not added to the database"
 
 	query := "INSERT INTO `users` (`login`, `name`, `surname`, `password`, `role_id`) VALUES (?, ?, ?, ?, ?)"
-	insertResult, err := rep.db.ExecContext(context.Background(), query, item.Login, item.Name, item.Surname, item.Password, item.Role)
+	insertResult, err := res.db.ExecContext(context.Background(), query, item.Login, item.Name, item.Surname, item.Password, item.Role)
 	if err != nil {
 		log.Fatalf("%s: %s", errStr, err)
 	}
@@ -50,8 +50,8 @@ func (res *UserRepository) GetUser(id int) (domain.User, error) {
 	return user, nil
 }
 
-func (rep *UserRepository) GetUsers() ([]domain.User, error) {
-	rows, err := rep.db.Query("select * from toy_shop.users")
+func (res *UserRepository) GetUsers() ([]domain.User, error) {
+	rows, err := res.db.Query("select * from toy_shop.users")
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -71,10 +71,10 @@ func (rep *UserRepository) GetUsers() ([]domain.User, error) {
 	return users, nil
 }
 
-func (rep *UserRepository) Edit(user domain.User) (domain.User, error) {
+func (res *UserRepository) Edit(user domain.User) (domain.User, error) {
 	errStr := "[repository] user not edit from the database: "
 
-	stmt, err := rep.db.Prepare("UPDATE users SET login = ?, name = ?, surname = ? , password = ?, role_id = ? WHERE id = ?")
+	stmt, err := res.db.Prepare("UPDATE users SET login = ?, name = ?, surname = ? , password = ?, role_id = ? WHERE id = ?")
 	if err != nil {
 		fmt.Println(errStr, err)
 		return domain.User{}, err
@@ -89,10 +89,10 @@ func (rep *UserRepository) Edit(user domain.User) (domain.User, error) {
 	return user, nil
 }
 
-func (rep *UserRepository) Delete(userID string) (bool, error) {
+func (res *UserRepository) Delete(userID string) (bool, error) {
 	errStr := "[repository] user not deleted from the database: "
 
-	_, err := rep.db.Exec("DELETE FROM users WHERE id = ?", userID)
+	_, err := res.db.Exec("DELETE FROM users WHERE id = ?", userID)
 	if err != nil {
 		fmt.Println(errStr, err)
 		return false, err

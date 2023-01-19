@@ -16,9 +16,9 @@ func NewBasketRepository(db *sql.DB) *BasketRepository {
 	return &BasketRepository{db}
 }
 
-func (rep *BasketRepository) GetBasket(userID int) (domain.Basket, error) {
+func (res *BasketRepository) GetBasket(userID int) (domain.Basket, error) {
 
-	rows, err := rep.db.Query("SELECT products_baskets.id, products_baskets.basket_id, product_id, count, price * count AS total_price FROM baskets JOIN products_baskets ON baskets.id = products_baskets.basket_id JOIN products ON products_baskets.product_id = products.id WHERE user_id = ?", userID)
+	rows, err := res.db.Query("SELECT products_baskets.id, products_baskets.basket_id, product_id, count, price * count AS total_price FROM baskets JOIN products_baskets ON baskets.id = products_baskets.basket_id JOIN products ON products_baskets.product_id = products.id WHERE user_id = ?", userID)
 
 	if err != nil {
 		log.Println(err)
@@ -105,4 +105,26 @@ func (res *BasketRepository) DeleteBasketProduct(productID int) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (res *BasketRepository) GetBasketProducts(basketID int) ([]domain.BasketProduct, error) {
+	rows, err := res.db.Query("select * from products_baskets WHERE basket_id = ?", basketID)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var basketProducts []domain.BasketProduct
+
+	for rows.Next() {
+		product := domain.BasketProduct{}
+		err = rows.Scan(&product.ID, &product.BasketID, &product.ProductID, &product.Count)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
+		basketProducts = append(basketProducts, product)
+	}
+	return basketProducts, nil
 }

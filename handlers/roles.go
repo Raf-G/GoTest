@@ -29,6 +29,7 @@ func (res *RoleHandlers) GetRole(w http.ResponseWriter, r *http.Request) {
 	role, err := res.service.GetRole(id)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -37,6 +38,7 @@ func (res *RoleHandlers) GetRole(w http.ResponseWriter, r *http.Request) {
 	err = json.NewEncoder(w).Encode(&jsonItem)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 

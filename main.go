@@ -38,22 +38,21 @@ func (app *App) setRouters() {
 	basketRepository := repository.NewBasketRepository(app.db)
 	productsRepository := repository.NewProductRepository(app.db)
 	reviewsRepository := repository.NewReviewRepository(app.db)
+	ordersRepository := repository.NewOrderRepository(app.db)
 
 	usersService := service.NewUserService(usersRepository)
 	rolesService := service.NewRoleService(rolesRepository)
 	basketService := service.NewBasketService(basketRepository, productsRepository)
 	productsService := service.NewProductService(productsRepository)
 	reviewsService := service.NewReviewService(reviewsRepository)
+	ordersService := service.NewOrderService(ordersRepository, basketRepository, productsRepository)
 
 	usersHandler := handlers.NewUserHandler(usersService)
 	rolesHandler := handlers.NewRoleHandler(rolesService)
 	basketHandler := handlers.NewBasketHandler(basketService)
 	productsHandler := handlers.NewProductHandler(productsService)
 	reviewsHandler := handlers.NewReviewHandler(reviewsService)
-
-	//methods for reviews
-	//methods for orders
-	//methods for statuses
+	ordersHandler := handlers.NewOrderHandler(ordersService)
 
 	//Users
 	app.router.HandleFunc("/api/user", usersHandler.Add).Methods("POST")
@@ -82,6 +81,11 @@ func (app *App) setRouters() {
 	app.router.HandleFunc("/api/review/{reviewId}", reviewsHandler.DeleteReview).Methods("DELETE")
 	app.router.HandleFunc("/api/reviews/{productId}", reviewsHandler.GetReviewsProduct).Methods("GET")
 	app.router.HandleFunc("/api/reviews", reviewsHandler.GetReviews).Methods("GET")
+	//Orders
+	app.router.HandleFunc("/api/order/{userId}", ordersHandler.AddOrder).Methods("POST")
+	app.router.HandleFunc("/api/order/{orderId}", ordersHandler.GetOrder).Methods("GET")
+	app.router.HandleFunc("/api/order/{orderId}", ordersHandler.DeleteOrder).Methods("DELETE")
+	app.router.HandleFunc("/api/orders", ordersHandler.GetOrders).Methods("GET")
 }
 
 func (app *App) Run() {

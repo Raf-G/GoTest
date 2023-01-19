@@ -66,9 +66,9 @@ CREATE TABLE `products_orders`
 -- Struct table `orders`
 CREATE TABLE `orders`
 (
-    `id`        int UNSIGNED NOT NULL PRIMARY KEY,
+    `id`        int UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
     `user_id`   int UNSIGNED NOT NULL,
-    `status_id` int UNSIGNED NOT NULL
+    `status_id` int UNSIGNED NOT NULL DEFAULT 1
 );
 
 -- Struct table `status`
@@ -141,3 +141,23 @@ VALUES (1, 1, 2),
        (1, 2, 4),
        (1, 3, 5),
        (2, 2, 4);
+
+INSERT INTO `statuses` (`id`, `name`)
+VALUES (1, 'В обработке'),
+       (2, 'Сборка'),
+       (3, 'Отправлен'),
+       (4, 'Доставлен'),
+       (5, 'Отменен');
+
+INSERT INTO `orders` (`id`, `user_id`, `status_id`)
+VALUES (1, 1, 1),
+       (2, 2, 2),
+       (3, 3, 3),
+       (4, 2, 1);
+
+INSERT INTO `products_orders` (`id`, `order_id`, `product_id`, `count`, `price`)
+VALUES (1, 1, 1, 3, 3000),
+       (2, 2, 2, 3, 111),
+       (3, 3, 3, 4, 333),
+       (4, 2, 1, 6, 200);
+

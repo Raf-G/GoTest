@@ -18,6 +18,8 @@ var ErrBasketProductNoBasketID = errors.New("basket_id is missing")
 var ErrBasketProductNoProductID = errors.New("product_id is missing")
 var ErrBasketProductNoCount = errors.New("count is missing")
 var ErrBasketProductNotFound = errors.New("basket product not found")
+var ErrBasketNotFound = errors.New("basket not found")
+var ErrBasketEmpty = errors.New("basket empty")
 
 //Products
 var ErrProductNotCreated = errors.New("product not created")
@@ -26,3 +28,6 @@ var ErrProductNotFound = errors.New("product not found")
 //Reviews
 var ErrReviewNotFound = errors.New("review not found")
 var ErrReviewNotEdited = errors.New("reviews not edited")
+
+//Orders
+var ErrOrderNotCreated = errors.New("order not created")
