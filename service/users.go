@@ -77,8 +77,8 @@ func (res *UserService) Edit(user domain.User) (domain.User, error) {
 	return newUser, nil
 }
 
-func (res *UserService) Delete(userID string) error {
-	errStr := fmt.Sprintf("[services] user (userID %s) not deleted", userID)
+func (res *UserService) Delete(userID int) error {
+	errStr := fmt.Sprintf("[services] user (userID %d) not deleted", userID)
 
 	isDeleted, err := res.store.Delete(userID)
 	if err != nil {

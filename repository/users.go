@@ -89,7 +89,7 @@ func (res *UserRepository) Edit(user domain.User) (domain.User, error) {
 	return user, nil
 }
 
-func (res *UserRepository) Delete(userID string) (bool, error) {
+func (res *UserRepository) Delete(userID int) (bool, error) {
 	errStr := "[repository] user not deleted from the database: "
 
 	_, err := res.db.Exec("DELETE FROM users WHERE id = ?", userID)

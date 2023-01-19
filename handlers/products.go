@@ -53,7 +53,7 @@ func (ch *ProductHandlers) GetProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	product, err := ch.service.GetOneProduct(productID)
+	product, err := ch.service.GetProduct(productID)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)

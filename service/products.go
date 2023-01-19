@@ -29,7 +29,7 @@ func (res *ProductService) AddProduct(item domain.Product) (domain.Product, erro
 	return *itemDB, nil
 }
 
-func (res *ProductService) GetOneProduct(id int) (domain.Product, error) {
+func (res *ProductService) GetProduct(id int) (domain.Product, error) {
 	errStr := fmt.Sprintf("[services] product not fetched")
 	product, err := res.store.GetProduct(id)
 	if err != nil {

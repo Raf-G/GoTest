@@ -5,7 +5,7 @@ type UsersStorage interface {
 	GetUser(int) (User, error)
 	GetUsers() ([]User, error)
 	Edit(User) (User, error)
-	Delete(string) (bool, error)
+	Delete(int) (bool, error)
 }
 
 type UsersService interface {
@@ -13,7 +13,7 @@ type UsersService interface {
 	GetUser(int) (User, error)
 	GetAll() ([]User, error)
 	Edit(User) (User, error)
-	Delete(string) error
+	Delete(int) error
 }
 
 type User struct {

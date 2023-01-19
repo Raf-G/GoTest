@@ -132,9 +132,15 @@ func (res *UserHandlers) Edit(w http.ResponseWriter, r *http.Request) {
 
 func (res *UserHandlers) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	userID := vars["userId"]
 
-	err := res.service.Delete(userID)
+	userID, err := strconv.Atoi(vars["userId"])
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	err = res.service.Delete(userID)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

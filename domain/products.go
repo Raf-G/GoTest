@@ -10,7 +10,7 @@ type ProductsStorage interface {
 
 type ProductsService interface {
 	AddProduct(Product) (Product, error)
-	GetOneProduct(int) (Product, error)
+	GetProduct(int) (Product, error)
 	EditProduct(Product) (Product, error)
 	DeleteProduct(int) error
 	GetAllProducts() ([]Product, error)
