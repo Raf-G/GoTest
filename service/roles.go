@@ -4,6 +4,7 @@ import (
 	"example.com/m/v2/domain"
 	"fmt"
 	"github.com/pkg/errors"
+	"reflect"
 )
 
 type RoleService struct {
@@ -12,6 +13,21 @@ type RoleService struct {
 
 func NewRoleService(storage domain.RolesStorage) *RoleService {
 	return &RoleService{storage}
+}
+
+func (res *RoleService) GetRole(id int) (domain.Role, error) {
+	errStr := fmt.Sprintf("[services] role (roleID %d) not fetched", id)
+
+	role, err := res.store.GetRole(id)
+	if err != nil {
+		return domain.Role{}, errors.Wrap(err, errStr)
+	}
+
+	if reflect.DeepEqual(role, domain.Role{}) {
+		return domain.Role{}, errors.Wrap(domain.ErrRoleNotFound, errStr)
+	}
+
+	return role, err
 }
 
 func (cs *RoleService) GetRoleAll() ([]domain.Role, error) {

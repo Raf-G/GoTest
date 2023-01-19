@@ -3,8 +3,10 @@ package handlers
 import (
 	"encoding/json"
 	"example.com/m/v2/domain"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type UserHandlers struct {
@@ -15,18 +17,17 @@ func NewUserHandler(service domain.UsersService) UserHandlers {
 	return UserHandlers{service}
 }
 
-func (ih *UserHandlers) Add(w http.ResponseWriter, r *http.Request) {
+func (res *UserHandlers) Add(w http.ResponseWriter, r *http.Request) {
 	var item jsonUser
 
 	err := json.NewDecoder(r.Body).Decode(&item)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "wrong data in request body", 400)
-
 		return
 	}
 
-	newItem, err := ih.service.Add(userFromJSONUser(item))
+	newItem, err := res.service.Add(userFromJSONUser(item))
 	if err != nil {
 		log.Println(err)
 		return
@@ -44,8 +45,35 @@ func (ih *UserHandlers) Add(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (ch *UserHandlers) GetUsers(w http.ResponseWriter, _ *http.Request) {
-	users, err := ch.service.GetAll()
+func (res *UserHandlers) GetUser(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+
+	id, err := strconv.Atoi(vars["userId"])
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	user, err := res.service.GetUser(id)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	jsonItem := jsonUserFromUser(user)
+
+	err = json.NewEncoder(w).Encode(&jsonItem)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+}
+
+func (res *UserHandlers) GetUsers(w http.ResponseWriter, _ *http.Request) {
+	users, err := res.service.GetAll()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -60,6 +88,47 @@ func (ch *UserHandlers) GetUsers(w http.ResponseWriter, _ *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	return
+}
 
+func (res *UserHandlers) Edit(w http.ResponseWriter, r *http.Request) {
+	var item jsonUser
+
+	err := json.NewDecoder(r.Body).Decode(&item)
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "wrong data in request body", 400)
+		return
+	}
+
+	newItem, err := res.service.Edit(userFromJSONUser(item))
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+
+	jsonItem := jsonUserFromUser(newItem)
+
+	err = json.NewEncoder(w).Encode(&jsonItem)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}
+
+func (res *UserHandlers) Delete(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	userID := vars["userId"]
+
+	err := res.service.Delete(userID)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	w.WriteHeader(200)
 }

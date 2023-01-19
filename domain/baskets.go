@@ -1,22 +1,31 @@
 package domain
 
 type BasketsStorage interface {
+	AddBasketProduct(BasketProduct) (BasketProduct, error)
+	GetBasketProduct(int, int) (BasketProduct, error)
+	EditBasketProduct(BasketProduct) (BasketProduct, error)
+	DeleteBasketProduct(int) (bool, error)
 	GetBasket(int) (Basket, error)
 }
 
 type BasketsService interface {
+	AddProductToBasket(BasketProduct) (BasketProduct, error)
+	DecreaseQuantityProductToBasket(BasketProduct) (BasketProduct, error)
+	DeleteProductToBasket(int) error
 	GetBasket(int) (Basket, error)
 }
 
 type BasketProduct struct {
-	ProductID  int
-	Count      int
-	TotalPrice int
+	ID         int `json:"id"`
+	BasketID   int `json:"basket_id"`
+	ProductID  int `json:"product_id"`
+	Count      int `json:"count"`
+	TotalPrice int `json:"total_price"`
 }
 
 type Basket struct {
-	ID         int
-	UserID     int
+	ID         int `json:"id"`
+	UserID     int `json:"user_id"`
 	Products   []BasketProduct
-	TotalPrice int
+	TotalPrice int `json:"total_price"`
 }

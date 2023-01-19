@@ -15,6 +15,22 @@ func NewRoleRepository(db *sql.DB) *RoleRepository {
 	return &RoleRepository{db}
 }
 
+func (res *RoleRepository) GetRole(id int) (domain.Role, error) {
+	errStr := "[repository] role not fetched from the database: "
+
+	row := res.db.QueryRow("SELECT * FROM roles WHERE id = ?", id)
+
+	role := domain.Role{}
+
+	err := row.Scan(&role.ID, &role.Name)
+	if err != nil {
+		fmt.Println(errStr, err)
+		return domain.Role{}, err
+	}
+
+	return role, nil
+}
+
 func (rep *RoleRepository) GetRoles() ([]domain.Role, error) {
 	rows, err := rep.db.Query("select * from toy_shop.roles")
 	if err != nil {
