@@ -77,7 +77,7 @@ func (res *OrderRepository) GetOrders() ([]domain.Order, error) {
 
 	for rows.Next() {
 		p := domain.Order{}
-		err := rows.Scan(&p.ID, &p.UserID, &p.StatusID)
+		err = rows.Scan(&p.ID, &p.UserID, &p.StatusID)
 		if err != nil {
 			fmt.Println(err)
 			return nil, err

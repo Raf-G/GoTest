@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"time"
 )
 
 type App struct {
@@ -57,45 +58,56 @@ func (app *App) setRouters() {
 	ordersHandler := handlers.NewOrderHandler(ordersService)
 	statusesHandler := handlers.NewStatusHandler(satusesService)
 
-	//Users
+	// Users
 	app.router.HandleFunc("/api/user", usersHandler.Add).Methods("POST")
 	app.router.HandleFunc("/api/user/{userId}", usersHandler.GetUser).Methods("GET")
 	app.router.HandleFunc("/api/users", usersHandler.GetUsers).Methods("GET")
 	app.router.HandleFunc("/api/user/{userId}", usersHandler.Edit).Methods("PUT")
 	app.router.HandleFunc("/api/user/{userId}", usersHandler.Delete).Methods("DELETE")
-	//Roles
+	// Roles
 	app.router.HandleFunc("/api/role/{roleId}", rolesHandler.GetRole).Methods("GET")
 	app.router.HandleFunc("/api/roles", rolesHandler.GetRoles).Methods("GET")
-	//Baskets
+	// Baskets
 	app.router.HandleFunc("/api/basket/product", basketHandler.AddProductToBasket).Methods("POST")
 	app.router.HandleFunc("/api/basket/product/{basketId}/{productId}", basketHandler.DecreaseQuantityProductToBasket).Methods("PUT")
 	app.router.HandleFunc("/api/basket/product/{productId}", basketHandler.DeleteProductToBasket).Methods("DELETE")
 	app.router.HandleFunc("/api/basket", basketHandler.GetBasket).Methods("GET")
-	//Products
+	// Products
 	app.router.HandleFunc("/api/product", productsHandler.AddProduct).Methods("POST")
 	app.router.HandleFunc("/api/product/{productId}", productsHandler.GetProduct).Methods("GET")
 	app.router.HandleFunc("/api/product/{productId}", productsHandler.EditProduct).Methods("PUT")
 	app.router.HandleFunc("/api/product/{productId}", productsHandler.DeleteProduct).Methods("DELETE")
 	app.router.HandleFunc("/api/products", productsHandler.GetProducts).Methods("GET")
-	//Reviews
+	// Reviews
 	app.router.HandleFunc("/api/review", reviewsHandler.AddReview).Methods("POST")
 	app.router.HandleFunc("/api/review/{reviewId}", reviewsHandler.EditReview).Methods("PUT")
 	app.router.HandleFunc("/api/review/{reviewId}", reviewsHandler.GetReview).Methods("GET")
 	app.router.HandleFunc("/api/review/{reviewId}", reviewsHandler.DeleteReview).Methods("DELETE")
 	app.router.HandleFunc("/api/reviews/{productId}", reviewsHandler.GetReviewsProduct).Methods("GET")
 	app.router.HandleFunc("/api/reviews", reviewsHandler.GetReviews).Methods("GET")
-	//Orders
+	// Orders
 	app.router.HandleFunc("/api/order/{userId}", ordersHandler.AddOrder).Methods("POST")
 	app.router.HandleFunc("/api/order/{orderId}", ordersHandler.GetOrder).Methods("GET")
 	app.router.HandleFunc("/api/order/{orderId}", ordersHandler.DeleteOrder).Methods("DELETE")
 	app.router.HandleFunc("/api/orders", ordersHandler.GetOrders).Methods("GET")
-	//Statuses
+	// Statuses
 	app.router.HandleFunc("/api/status/{statusId}", statusesHandler.GetStatus).Methods("GET")
 	app.router.HandleFunc("/api/statuses", statusesHandler.GetStatuses).Methods("GET")
 }
 
 func (app *App) Run() {
-	log.Println(http.ListenAndServe(app.address, app.router))
+	server := &http.Server{
+		Addr:         app.address,
+		Handler:      app.router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 1 * time.Second,
+		IdleTimeout:  15 * time.Second,
+	}
+
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func (app *App) Stop() {

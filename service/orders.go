@@ -18,7 +18,7 @@ func NewOrderService(storage domain.OrdersStorage, storageBasket domain.BasketsS
 }
 
 func (res *OrderService) AddOrder(userID int) (domain.Order, error) {
-	errStr := fmt.Sprintf("[services] order not added")
+	errStr := "[services] order not added"
 
 	_, err := res.storeBasket.GetBasket(userID)
 	if err != nil {
@@ -42,9 +42,9 @@ func (res *OrderService) AddOrder(userID int) (domain.Order, error) {
 		productOrder.Count = v.Count
 		productOrder.BasketProductID = v.ID
 
-		product, err := res.storeProduct.GetProduct(v.ProductID)
-		if err != nil {
-			return domain.Order{}, errors.Wrap(err, errStr)
+		product, errGet := res.storeProduct.GetProduct(v.ProductID)
+		if errGet != nil {
+			return domain.Order{}, errors.Wrap(errGet, errStr)
 		}
 
 		productOrder.Price = v.Count * product.Price
@@ -82,12 +82,12 @@ func (res *OrderService) AddOrder(userID int) (domain.Order, error) {
 			return domain.Order{}, errors.Wrap(err, errStr)
 		}
 
-		isDeleted, err := res.storeBasket.DeleteBasketProduct(v.BasketProductID)
-		if err != nil {
-			return domain.Order{}, errors.Wrap(err, errStr)
+		isDeleted, errDel := res.storeBasket.DeleteBasketProduct(v.BasketProductID)
+		if errDel != nil {
+			return domain.Order{}, errors.Wrap(errDel, errStr)
 		}
 		if !isDeleted {
-			return domain.Order{}, errors.Wrap(err, errStr)
+			return domain.Order{}, errors.Wrap(errDel, errStr)
 		}
 	}
 
@@ -134,7 +134,7 @@ func (res *OrderService) DeleteOrder(orderID int) error {
 }
 
 func (res *OrderService) GetOrders() ([]domain.Order, error) {
-	errStr := fmt.Sprintf("[services] orders not fetched")
+	errStr := "[services] orders not fetched"
 	c, err := res.store.GetOrders()
 	if err != nil {
 		return nil, errors.Wrap(err, errStr)

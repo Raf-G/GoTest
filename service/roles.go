@@ -31,7 +31,7 @@ func (res *RoleService) GetRole(id int) (domain.Role, error) {
 }
 
 func (cs *RoleService) GetRoleAll() ([]domain.Role, error) {
-	errStr := fmt.Sprintf("[services] users not fetched")
+	errStr := "[services] users not fetched"
 	c, err := cs.store.GetRoles()
 	if err != nil {
 		return nil, errors.Wrap(err, errStr)

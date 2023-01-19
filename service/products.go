@@ -15,7 +15,7 @@ func NewProductService(storage domain.ProductsStorage) *ProductService {
 }
 
 func (res *ProductService) AddProduct(item domain.Product) (domain.Product, error) {
-	errStr := fmt.Sprintf("[services] product not added")
+	errStr := "[services] product not added"
 
 	itemDB, err := res.store.AddProduct(item)
 	if err != nil {
@@ -30,7 +30,7 @@ func (res *ProductService) AddProduct(item domain.Product) (domain.Product, erro
 }
 
 func (res *ProductService) GetProduct(id int) (domain.Product, error) {
-	errStr := fmt.Sprintf("[services] product not fetched")
+	errStr := "[services] product not fetched"
 	product, err := res.store.GetProduct(id)
 	if err != nil {
 		return domain.Product{}, errors.Wrap(err, errStr)
@@ -40,7 +40,7 @@ func (res *ProductService) GetProduct(id int) (domain.Product, error) {
 }
 
 func (res *ProductService) EditProduct(product domain.Product) (domain.Product, error) {
-	errStr := fmt.Sprintf("[services] product not edit")
+	errStr := "[services] product not edit"
 
 	newProduct, err := res.store.EditProduct(product)
 	if err != nil {
@@ -66,7 +66,7 @@ func (res *ProductService) DeleteProduct(productID int) error {
 }
 
 func (res *ProductService) GetAllProducts() ([]domain.Product, error) {
-	errStr := fmt.Sprintf("[services] products not fetched")
+	errStr := "[services] products not fetched"
 	c, err := res.store.GetProducts()
 	if err != nil {
 		return nil, errors.Wrap(err, errStr)

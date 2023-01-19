@@ -61,7 +61,7 @@ func (res *UserRepository) GetUsers() ([]domain.User, error) {
 
 	for rows.Next() {
 		p := domain.User{}
-		err := rows.Scan(&p.ID, &p.Login, &p.Surname, &p.Name, &p.Password, &p.Role)
+		err = rows.Scan(&p.ID, &p.Login, &p.Surname, &p.Name, &p.Password, &p.Role)
 		if err != nil {
 			fmt.Println(err)
 			return nil, err

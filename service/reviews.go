@@ -15,7 +15,7 @@ func NewReviewService(storage domain.ReviewsStorage) *ReviewService {
 }
 
 func (res *ReviewService) AddReview(item domain.Review) (domain.Review, error) {
-	errStr := fmt.Sprintf("[services] review not added")
+	errStr := "[services] review not added"
 
 	itemDB, err := res.store.AddReview(item)
 	if err != nil {
@@ -30,7 +30,7 @@ func (res *ReviewService) AddReview(item domain.Review) (domain.Review, error) {
 }
 
 func (res *ReviewService) EditReview(review domain.Review) (domain.Review, error) {
-	errStr := fmt.Sprintf("[services] review not edited")
+	errStr := "[services] review not edited"
 
 	err := res.store.EditReview(review)
 	if err != nil {
@@ -46,7 +46,7 @@ func (res *ReviewService) EditReview(review domain.Review) (domain.Review, error
 }
 
 func (res *ReviewService) GetReview(id int) (domain.Review, error) {
-	errStr := fmt.Sprintf("[services] review not fetched")
+	errStr := "[services] review not fetched"
 	review, err := res.store.GetReview(id)
 	if err != nil {
 		return domain.Review{}, errors.Wrap(err, errStr)
@@ -71,7 +71,7 @@ func (res *ReviewService) DeleteReview(reviewID int) error {
 }
 
 func (res *ReviewService) GetAllReviewsProduct(productID int) ([]domain.Review, error) {
-	errStr := fmt.Sprintf("[services] reviews not fetched")
+	errStr := "[services] reviews not fetched"
 
 	c, err := res.store.GetReviewsProduct(productID)
 	if err != nil {
@@ -82,7 +82,7 @@ func (res *ReviewService) GetAllReviewsProduct(productID int) ([]domain.Review, 
 }
 
 func (res *ReviewService) GetReviews() ([]domain.Review, error) {
-	errStr := fmt.Sprintf("[services] reviews not fetched")
+	errStr := "[services] reviews not fetched"
 
 	c, err := res.store.GetReviews()
 	if err != nil {

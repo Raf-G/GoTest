@@ -31,7 +31,7 @@ func (res *StatusService) GetStatus(statusID int) (domain.Status, error) {
 }
 
 func (res *StatusService) GetStatuses() ([]domain.Status, error) {
-	errStr := fmt.Sprintf("[services] statuses not fetched")
+	errStr := "[services] statuses not fetched"
 	c, err := res.store.GetStatuses()
 	if err != nil {
 		return nil, errors.Wrap(err, errStr)

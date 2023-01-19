@@ -42,7 +42,7 @@ func (res *StatusRepository) GetStatuses() ([]domain.Status, error) {
 
 	for rows.Next() {
 		p := domain.Status{}
-		err := rows.Scan(&p.ID, &p.Name)
+		err = rows.Scan(&p.ID, &p.Name)
 		if err != nil {
 			fmt.Println(err)
 			return nil, err

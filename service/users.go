@@ -17,7 +17,7 @@ func NewUserService(storage domain.UsersStorage) *UserService {
 }
 
 func (res *UserService) Add(item domain.User) (domain.User, error) {
-	errStr := fmt.Sprintf("[services] item not added")
+	errStr := "[services] item not added"
 
 	err := validation.UserValidation(item)
 	if err != nil {
@@ -52,7 +52,7 @@ func (res *UserService) GetUser(id int) (domain.User, error) {
 }
 
 func (res *UserService) GetAll() ([]domain.User, error) {
-	errStr := fmt.Sprintf("[services] users not fetched")
+	errStr := "[services] users not fetched"
 	c, err := res.store.GetUsers()
 	if err != nil {
 		return nil, errors.Wrap(err, errStr)
@@ -62,7 +62,7 @@ func (res *UserService) GetAll() ([]domain.User, error) {
 }
 
 func (res *UserService) Edit(user domain.User) (domain.User, error) {
-	errStr := fmt.Sprintf("[services] user not edit")
+	errStr := "[services] user not edit"
 
 	newUser, err := res.store.Edit(user)
 	if err != nil {

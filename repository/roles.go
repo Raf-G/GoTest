@@ -42,7 +42,7 @@ func (rep *RoleRepository) GetRoles() ([]domain.Role, error) {
 
 	for rows.Next() {
 		p := domain.Role{}
-		err := rows.Scan(&p.ID, &p.Name)
+		err = rows.Scan(&p.ID, &p.Name)
 		if err != nil {
 			fmt.Println(err)
 			return nil, err
