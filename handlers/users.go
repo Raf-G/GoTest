@@ -118,7 +118,7 @@ func (res *UserHandlers) Edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonItem := jsonUserFromUser(newItem)
+	jsonItem := jsonUserFromUser(*newItem)
 
 	err = json.NewEncoder(w).Encode(&jsonItem)
 	if err != nil {
