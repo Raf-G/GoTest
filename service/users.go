@@ -5,7 +5,6 @@ import (
 	"example.com/m/v2/validation"
 	"fmt"
 	"github.com/pkg/errors"
-	"reflect"
 )
 
 type UserService struct {
@@ -44,11 +43,11 @@ func (res *UserService) GetUser(id int) (domain.User, error) {
 		return domain.User{}, errors.Wrap(err, errStr)
 	}
 
-	if reflect.DeepEqual(user, domain.User{}) {
+	if user == nil {
 		return domain.User{}, errors.Wrap(domain.ErrUserNotFound, errStr)
 	}
 
-	return user, err
+	return *user, err
 }
 
 func (res *UserService) GetAll() ([]domain.User, error) {
@@ -61,17 +60,12 @@ func (res *UserService) GetAll() ([]domain.User, error) {
 	return c, nil
 }
 
-func (res *UserService) Edit(user domain.User) (domain.User, error) {
+func (res *UserService) Edit(user domain.User) (*domain.User, error) {
 	errStr := "[services] user not edit"
 
 	newUser, err := res.store.Edit(user)
 	if err != nil {
-		return domain.User{}, errors.Wrap(domain.ErrUserNotFound, errStr)
-	}
-
-	_, err = res.store.GetUser(user.ID)
-	if err != nil {
-		return domain.User{}, errors.Wrap(err, errStr)
+		return nil, errors.Wrap(domain.ErrUserNotFound, errStr)
 	}
 
 	return newUser, nil
