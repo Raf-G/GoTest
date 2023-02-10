@@ -79,11 +79,16 @@ func TestAddUser(t *testing.T) {
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
 			c := gomock.NewController(t)
+			defer c.Finish()
+
 			mockUsersRepository := mock_domain.NewMockUsersStorage(c)
 			usersService := NewUserService(mockUsersRepository)
 
 			if testCase.isCallRepositoryMethod {
-				mockUsersRepository.EXPECT().Add(testCase.inputUser).Return(testCase.returnUser, testCase.returnErrorRepo)
+				mockUsersRepository.
+					EXPECT().
+					Add(testCase.inputUser).
+					Return(testCase.returnUser, testCase.returnErrorRepo)
 			}
 
 			respUser, err := usersService.Add(testCase.inputUser)
@@ -93,8 +98,6 @@ func TestAddUser(t *testing.T) {
 				assert.NoError(t, err)
 				assert.EqualValues(t, testCase.returnUser, respUser)
 			}
-
-			defer c.Finish()
 		})
 	}
 }
@@ -104,9 +107,9 @@ func TestGetUser(t *testing.T) {
 	testTable := []struct {
 		name            string
 		idUser          int
-		returnRespRepo  *domain.User
 		returnError     error
 		returnResp      domain.User
+		returnRespRepo  *domain.User
 		returnErrorRepo error
 		isCheckError    bool
 	}{
@@ -156,10 +159,15 @@ func TestGetUser(t *testing.T) {
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
 			c := gomock.NewController(t)
+			defer c.Finish()
+
 			mockUsersRepository := mock_domain.NewMockUsersStorage(c)
 			usersService := NewUserService(mockUsersRepository)
 
-			mockUsersRepository.EXPECT().GetUser(testCase.idUser).Return(testCase.returnRespRepo, testCase.returnErrorRepo)
+			mockUsersRepository.
+				EXPECT().
+				GetUser(testCase.idUser).
+				Return(testCase.returnRespRepo, testCase.returnErrorRepo)
 
 			respUser, err := usersService.GetUser(testCase.idUser)
 			if testCase.isCheckError {
@@ -168,8 +176,6 @@ func TestGetUser(t *testing.T) {
 				assert.NoError(t, err)
 				assert.EqualValues(t, testCase.returnResp, respUser)
 			}
-
-			defer c.Finish()
 		})
 	}
 }
@@ -178,9 +184,9 @@ func TestGetUsers(t *testing.T) {
 
 	testTable := []struct {
 		name            string
-		returnRespRepo  []domain.User
 		returnError     error
 		returnResp      []domain.User
+		returnRespRepo  []domain.User
 		returnErrorRepo error
 		isCheckError    bool
 	}{
@@ -211,10 +217,15 @@ func TestGetUsers(t *testing.T) {
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
 			c := gomock.NewController(t)
+			defer c.Finish()
+
 			mockUsersRepository := mock_domain.NewMockUsersStorage(c)
 			usersService := NewUserService(mockUsersRepository)
 
-			mockUsersRepository.EXPECT().GetUsers().Return(testCase.returnRespRepo, testCase.returnErrorRepo)
+			mockUsersRepository.
+				EXPECT().
+				GetUsers().
+				Return(testCase.returnRespRepo, testCase.returnErrorRepo)
 
 			respUsers, err := usersService.GetAll()
 			if testCase.isCheckError {
@@ -224,8 +235,6 @@ func TestGetUsers(t *testing.T) {
 				assert.NoError(t, err)
 				assert.EqualValues(t, testCase.returnResp, respUsers)
 			}
-
-			defer c.Finish()
 		})
 	}
 }
@@ -325,11 +334,16 @@ func TestEditUser(t *testing.T) {
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
 			c := gomock.NewController(t)
+			defer c.Finish()
+
 			mockUsersRepository := mock_domain.NewMockUsersStorage(c)
 			usersService := NewUserService(mockUsersRepository)
 
 			if testCase.isCallRepositoryMethod {
-				mockUsersRepository.EXPECT().Edit(testCase.inputUser).Return(testCase.returnRepo, testCase.returnErrorRepo)
+				mockUsersRepository.
+					EXPECT().
+					Edit(testCase.inputUser).
+					Return(testCase.returnRepo, testCase.returnErrorRepo)
 			}
 
 			respUser, err := usersService.Edit(testCase.inputUser)
@@ -339,8 +353,6 @@ func TestEditUser(t *testing.T) {
 				assert.NoError(t, err)
 				assert.EqualValues(t, testCase.returnUser, respUser)
 			}
-
-			defer c.Finish()
 		})
 	}
 }
@@ -378,11 +390,16 @@ func TestDeleteUser(t *testing.T) {
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
 			c := gomock.NewController(t)
+			defer c.Finish()
+
 			mockUsersRepository := mock_domain.NewMockUsersStorage(c)
 			usersService := NewUserService(mockUsersRepository)
 
 			if testCase.isCallRepositoryMethod {
-				mockUsersRepository.EXPECT().Delete(testCase.idUser).Return(testCase.returnRepo, testCase.returnErrorRepo)
+				mockUsersRepository.
+					EXPECT().
+					Delete(testCase.idUser).
+					Return(testCase.returnRepo, testCase.returnErrorRepo)
 			}
 
 			err := usersService.Delete(testCase.idUser)
@@ -391,8 +408,6 @@ func TestDeleteUser(t *testing.T) {
 			} else {
 				assert.NoError(t, err)
 			}
-
-			defer c.Finish()
 		})
 	}
 }
