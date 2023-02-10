@@ -103,7 +103,6 @@ func TestAddUser(t *testing.T) {
 }
 
 func TestGetUser(t *testing.T) {
-
 	testTable := []struct {
 		name            string
 		idUser          int
@@ -181,7 +180,6 @@ func TestGetUser(t *testing.T) {
 }
 
 func TestGetUsers(t *testing.T) {
-
 	testTable := []struct {
 		name            string
 		returnError     error
