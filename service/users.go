@@ -28,11 +28,7 @@ func (res *UserService) Add(item domain.User) (domain.User, error) {
 		return item, errors.Wrap(err, errStr)
 	}
 
-	if itemDB == nil {
-		return item, errors.Wrap(domain.ErrUserNotFound, errStr)
-	}
-
-	return *itemDB, nil
+	return itemDB, nil
 }
 
 func (res *UserService) GetUser(id int) (domain.User, error) {
@@ -60,12 +56,17 @@ func (res *UserService) GetAll() ([]domain.User, error) {
 	return c, nil
 }
 
-func (res *UserService) Edit(user domain.User) (*domain.User, error) {
+func (res *UserService) Edit(user domain.User) (domain.User, error) {
 	errStr := "[services] user not edit"
+
+	err := validation.UserValidation(user)
+	if err != nil {
+		return user, errors.Wrap(err, errStr)
+	}
 
 	newUser, err := res.store.Edit(user)
 	if err != nil {
-		return nil, errors.Wrap(domain.ErrUserNotFound, errStr)
+		return domain.User{}, errors.Wrap(domain.ErrUserNotEdited, errStr)
 	}
 
 	return newUser, nil

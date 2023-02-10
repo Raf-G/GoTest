@@ -7,6 +7,7 @@ var ErrNotPositiveQuantity = errors.New("quantity must be greater than 0")
 
 // Users
 var ErrUserNotFound = errors.New("user not found")
+var ErrUserNotEdited = errors.New("user not edited")
 var ErrNoLogin = errors.New("login is missing")
 var ErrNoSurname = errors.New("surname is missing")
 
