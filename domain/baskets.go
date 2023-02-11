@@ -1,5 +1,7 @@
 package domain
 
+//go:generate mockgen -source=users.go -destination=mocks/mock.go
+
 type BasketsStorage interface {
 	AddBasketProduct(BasketProduct) (BasketProduct, error)
 	GetBasketProduct(int, int) (BasketProduct, error)
