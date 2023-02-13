@@ -1,10 +1,10 @@
 package domain
 
-//go:generate mockgen -source=users.go -destination=mocks/mock.go
+//go:generate mockgen -source=products.go -destination=mocks/products.go
 
 type ProductsStorage interface {
 	AddProduct(Product) (*Product, error)
-	GetProduct(int) (Product, error)
+	GetProduct(int) (*Product, error)
 	EditProduct(Product) (Product, error)
 	DeleteProduct(int) (bool, error)
 	GetProducts() ([]Product, error)

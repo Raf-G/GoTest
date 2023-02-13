@@ -20,6 +20,7 @@ var ErrBasketProductNoProductID = errors.New("product_id is missing")
 var ErrBasketProductNoCount = errors.New("count is missing")
 var ErrBasketProductNotFound = errors.New("basket product not found")
 var ErrBasketNotFound = errors.New("basket not found")
+var ErrBasketNotDeleted = errors.New("basket not deleted")
 var ErrBasketEmpty = errors.New("basket empty")
 
 // Products

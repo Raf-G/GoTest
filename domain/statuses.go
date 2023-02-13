@@ -1,6 +1,6 @@
 package domain
 
-//go:generate mockgen -source=users.go -destination=mocks/mock.go
+//go:generate mockgen -source=statuses.go -destination=mocks/statuses.go
 
 type StatusesStorage interface {
 	GetStatus(int) (Status, error)

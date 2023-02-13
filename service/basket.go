@@ -25,7 +25,7 @@ func (cs *BasketService) GetBasket(userID int) (domain.Basket, error) {
 	if err != nil {
 		return basket, errors.Wrap(err, errStr)
 	}
-	basket = c
+	basket = *c
 	basket.UserID = userID
 
 	// Calculation all price basket
@@ -49,12 +49,12 @@ func (res *BasketService) AddProductToBasket(item domain.BasketProduct) (domain.
 	}
 
 	existingProduct, err := res.store.GetBasketProduct(item.BasketID, item.ProductID)
-	if err == nil {
+	if err == nil && existingProduct != nil {
 		existingProduct.Count += 1
 
-		newProduct, errEdit := res.store.EditBasketProduct(existingProduct)
+		newProduct, errEdit := res.store.EditBasketProduct(*existingProduct)
 		if errEdit != nil {
-			return existingProduct, errors.Wrap(domain.ErrBasketProductNotFound, errStr)
+			return item, errors.Wrap(domain.ErrBasketProductNotFound, errStr)
 		}
 
 		return newProduct, nil
@@ -83,25 +83,25 @@ func (res *BasketService) DecreaseQuantityProductToBasket(product domain.BasketP
 
 	existingProduct, err := res.store.GetBasketProduct(product.BasketID, product.ProductID)
 
-	if err == nil {
+	if err == nil && existingProduct != nil {
 		if existingProduct.Count <= 1 {
 			isDeleted, errDel := res.store.DeleteBasketProduct(existingProduct.ID)
 			if errDel != nil {
-				return existingProduct, errDel
+				return *existingProduct, errDel
 			}
 
 			if !isDeleted {
-				return existingProduct, errDel
+				return *existingProduct, errors.Wrap(domain.ErrBasketNotDeleted, errStr)
 			}
 
 			existingProduct.Count -= 1
 			existingProduct.TotalPrice = 0
-			return existingProduct, nil
+			return *existingProduct, nil
 		}
 
 		existingProduct.Count -= 1
 
-		_, errEdit := res.store.EditBasketProduct(existingProduct)
+		_, errEdit := res.store.EditBasketProduct(*existingProduct)
 		if errEdit != nil {
 			return product, errors.Wrap(domain.ErrBasketProductNotFound, errStr)
 		}
@@ -112,7 +112,7 @@ func (res *BasketService) DecreaseQuantityProductToBasket(product domain.BasketP
 		}
 
 		existingProduct.TotalPrice = productInfo.Price * existingProduct.Count
-		return existingProduct, nil
+		return *existingProduct, nil
 	}
 
 	product.Count -= 1

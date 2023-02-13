@@ -1,6 +1,6 @@
 package domain
 
-//go:generate mockgen -source=users.go -destination=mocks/mock.go
+//go:generate mockgen -source=users.go -destination=mocks/users.go
 
 type UsersStorage interface {
 	Add(User) (User, error)

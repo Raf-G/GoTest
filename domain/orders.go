@@ -1,6 +1,6 @@
 package domain
 
-//go:generate mockgen -source=users.go -destination=mocks/mock.go
+//go:generate mockgen -source=orders.go -destination=mocks/orders.go
 
 type OrdersStorage interface {
 	AddOrder(int) (int, error)
