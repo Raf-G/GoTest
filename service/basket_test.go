@@ -838,3 +838,54 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 		})
 	}
 }
+
+func TestDecreaseDeleteProductToBasket(t *testing.T) {
+	testTable := []struct {
+		name                               string
+		inputBasketID                      int
+		returnError                        error
+		returnRespRepoDeleteBasketProduct  bool
+		returnErrorRepoDeleteBasketProduct error
+	}{
+		{
+			name:                               "ok",
+			inputBasketID:                      1,
+			returnError:                        nil,
+			returnRespRepoDeleteBasketProduct:  true,
+			returnErrorRepoDeleteBasketProduct: nil,
+		},
+		{
+			name:                               "error",
+			inputBasketID:                      1,
+			returnError:                        testErr,
+			returnRespRepoDeleteBasketProduct:  false,
+			returnErrorRepoDeleteBasketProduct: testErr,
+		},
+		{
+			name:                               "isDeleted = false",
+			inputBasketID:                      1,
+			returnError:                        domain.ErrBasketProductNotFound,
+			returnRespRepoDeleteBasketProduct:  false,
+			returnErrorRepoDeleteBasketProduct: nil,
+		},
+	}
+
+	for _, testCase := range testTable {
+		t.Run(testCase.name, func(t *testing.T) {
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			mockBasketsRepository := mock_domain.NewMockBasketsStorage(c)
+			mockProductsRepository := mock_domain.NewMockProductsStorage(c)
+			basketsService := NewBasketService(mockBasketsRepository, mockProductsRepository)
+
+			mockBasketsRepository.
+				EXPECT().
+				DeleteBasketProduct(1).
+				Return(testCase.returnRespRepoDeleteBasketProduct, testCase.returnErrorRepoDeleteBasketProduct)
+
+			err := basketsService.DeleteProductToBasket(testCase.inputBasketID)
+			assert.ErrorIs(t, err, testCase.returnError)
+		})
+	}
+}
