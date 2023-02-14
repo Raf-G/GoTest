@@ -14,13 +14,13 @@ var testErr = errors.New("test error")
 
 func TestAddUser(t *testing.T) {
 	testTable := []struct {
-		name                 string
-		inputUser            domain.User
-		returnUser           *domain.User
-		returnError          error
-		callRepositoryMethod bool
-		returnErrorRepo      error
-		checkError           bool
+		name                   string
+		inputUser              domain.User
+		returnUser             domain.User
+		returnError            error
+		isCallRepositoryMethod bool
+		returnErrorRepo        error
+		isCheckError           bool
 	}{
 		{
 			name: "ok",
@@ -31,7 +31,7 @@ func TestAddUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser: &domain.User{
+			returnUser: domain.User{
 				ID:       1,
 				Login:    "testingLogin",
 				Surname:  "testingSurname",
@@ -39,10 +39,10 @@ func TestAddUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnError:          nil,
-			callRepositoryMethod: true,
-			returnErrorRepo:      nil,
-			checkError:           false,
+			returnError:            nil,
+			isCallRepositoryMethod: true,
+			returnErrorRepo:        nil,
+			isCheckError:           false,
 		},
 		{
 			name: "no login",
@@ -53,11 +53,11 @@ func TestAddUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser:           nil,
-			returnError:          domain.ErrNoLogin,
-			callRepositoryMethod: false,
-			returnErrorRepo:      nil,
-			checkError:           true,
+			returnUser:             domain.User{},
+			returnError:            domain.ErrNoLogin,
+			isCallRepositoryMethod: false,
+			returnErrorRepo:        nil,
+			isCheckError:           true,
 		},
 		{
 			name: "no surname",
@@ -68,48 +68,49 @@ func TestAddUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser:           nil,
-			returnError:          domain.ErrNoSurname,
-			callRepositoryMethod: false,
-			returnErrorRepo:      nil,
-			checkError:           true,
+			returnUser:             domain.User{},
+			returnError:            domain.ErrNoSurname,
+			isCallRepositoryMethod: false,
+			returnErrorRepo:        nil,
+			isCheckError:           true,
 		},
 	}
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
 			c := gomock.NewController(t)
+			defer c.Finish()
+
 			mockUsersRepository := mock_domain.NewMockUsersStorage(c)
 			usersService := NewUserService(mockUsersRepository)
 
-			if testCase.callRepositoryMethod {
-				mockUsersRepository.EXPECT().Add(testCase.inputUser).Return(testCase.returnUser, testCase.returnErrorRepo)
+			if testCase.isCallRepositoryMethod {
+				mockUsersRepository.
+					EXPECT().
+					Add(testCase.inputUser).
+					Return(testCase.returnUser, testCase.returnErrorRepo)
 			}
 
 			respUser, err := usersService.Add(testCase.inputUser)
-			if testCase.checkError {
+			if testCase.isCheckError {
 				assert.ErrorIs(t, err, testCase.returnError)
 			} else {
 				assert.NoError(t, err)
-				assert.EqualValues(t, *testCase.returnUser, respUser)
+				assert.EqualValues(t, testCase.returnUser, respUser)
 			}
-
-			defer c.Finish()
 		})
 	}
 }
 
 func TestGetUser(t *testing.T) {
-
 	testTable := []struct {
-		name                 string
-		idUser               int
-		returnRespRepo       *domain.User
-		returnError          error
-		returnResp           domain.User
-		callRepositoryMethod bool
-		returnErrorRepo      error
-		checkError           bool
+		name            string
+		idUser          int
+		returnError     error
+		returnResp      domain.User
+		returnRespRepo  *domain.User
+		returnErrorRepo error
+		isCheckError    bool
 	}{
 		{
 			name:   "ok",
@@ -130,66 +131,62 @@ func TestGetUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnError:          nil,
-			callRepositoryMethod: true,
-			returnErrorRepo:      nil,
-			checkError:           false,
+			returnError:     nil,
+			returnErrorRepo: nil,
+			isCheckError:    false,
 		},
 		{
-			name:                 "error",
-			idUser:               1,
-			returnRespRepo:       nil,
-			returnResp:           domain.User{},
-			returnError:          testErr,
-			callRepositoryMethod: true,
-			returnErrorRepo:      testErr,
-			checkError:           true,
+			name:            "error",
+			idUser:          1,
+			returnRespRepo:  nil,
+			returnResp:      domain.User{},
+			returnError:     testErr,
+			returnErrorRepo: testErr,
+			isCheckError:    true,
 		},
 		{
-			name:                 "no user",
-			idUser:               1,
-			returnRespRepo:       nil,
-			returnResp:           domain.User{},
-			returnError:          domain.ErrUserNotFound,
-			callRepositoryMethod: true,
-			returnErrorRepo:      nil,
-			checkError:           true,
+			name:            "no user",
+			idUser:          1,
+			returnRespRepo:  nil,
+			returnResp:      domain.User{},
+			returnError:     domain.ErrUserNotFound,
+			returnErrorRepo: nil,
+			isCheckError:    true,
 		},
 	}
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
 			c := gomock.NewController(t)
+			defer c.Finish()
+
 			mockUsersRepository := mock_domain.NewMockUsersStorage(c)
 			usersService := NewUserService(mockUsersRepository)
 
-			if testCase.callRepositoryMethod {
-				mockUsersRepository.EXPECT().GetUser(testCase.idUser).Return(testCase.returnRespRepo, testCase.returnErrorRepo)
-			}
+			mockUsersRepository.
+				EXPECT().
+				GetUser(testCase.idUser).
+				Return(testCase.returnRespRepo, testCase.returnErrorRepo)
 
 			respUser, err := usersService.GetUser(testCase.idUser)
-			if testCase.checkError {
+			if testCase.isCheckError {
 				assert.ErrorIs(t, err, testCase.returnError)
 			} else {
 				assert.NoError(t, err)
 				assert.EqualValues(t, testCase.returnResp, respUser)
 			}
-
-			defer c.Finish()
 		})
 	}
 }
 
 func TestGetUsers(t *testing.T) {
-
 	testTable := []struct {
-		name                 string
-		returnRespRepo       []domain.User
-		returnError          error
-		returnResp           []domain.User
-		callRepositoryMethod bool
-		returnErrorRepo      error
-		checkError           bool
+		name            string
+		returnError     error
+		returnResp      []domain.User
+		returnRespRepo  []domain.User
+		returnErrorRepo error
+		isCheckError    bool
 	}{
 		{
 			name: "ok",
@@ -201,56 +198,55 @@ func TestGetUsers(t *testing.T) {
 				{ID: 1, Login: "testingLogin", Surname: "testingSurname", Name: "testungName", Role: 1, Password: "qeqwe12"},
 				{ID: 2, Login: "testingLogin2", Surname: "testingSurname2", Name: "testungName2", Role: 2, Password: "qeqwe122"},
 			},
-			returnError:          nil,
-			callRepositoryMethod: true,
-			returnErrorRepo:      nil,
-			checkError:           false,
+			returnError:     nil,
+			returnErrorRepo: nil,
+			isCheckError:    false,
 		},
 		{
-			name:                 "error",
-			returnRespRepo:       nil,
-			returnResp:           nil,
-			returnError:          testErr,
-			callRepositoryMethod: true,
-			returnErrorRepo:      testErr,
-			checkError:           true,
+			name:            "error",
+			returnRespRepo:  nil,
+			returnResp:      nil,
+			returnError:     testErr,
+			returnErrorRepo: testErr,
+			isCheckError:    true,
 		},
 	}
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
 			c := gomock.NewController(t)
+			defer c.Finish()
+
 			mockUsersRepository := mock_domain.NewMockUsersStorage(c)
 			usersService := NewUserService(mockUsersRepository)
 
-			if testCase.callRepositoryMethod {
-				mockUsersRepository.EXPECT().GetUsers().Return(testCase.returnRespRepo, testCase.returnErrorRepo)
-			}
+			mockUsersRepository.
+				EXPECT().
+				GetUsers().
+				Return(testCase.returnRespRepo, testCase.returnErrorRepo)
 
 			respUsers, err := usersService.GetAll()
-			if testCase.checkError {
+			if testCase.isCheckError {
 				assert.ErrorIs(t, err, testCase.returnError)
 				fmt.Println(assert.ErrorIs(t, err, testCase.returnError))
 			} else {
 				assert.NoError(t, err)
 				assert.EqualValues(t, testCase.returnResp, respUsers)
 			}
-
-			defer c.Finish()
 		})
 	}
 }
 
 func TestEditUser(t *testing.T) {
 	testTable := []struct {
-		name                 string
-		inputUser            domain.User
-		returnUser           *domain.User
-		returnError          error
-		callRepositoryMethod bool
-		returnRepo           *domain.User
-		returnErrorRepo      error
-		checkError           bool
+		name                   string
+		inputUser              domain.User
+		returnUser             domain.User
+		returnError            error
+		isCallRepositoryMethod bool
+		returnRepo             domain.User
+		returnErrorRepo        error
+		isCheckError           bool
 	}{
 		{
 			name: "ok",
@@ -262,7 +258,7 @@ func TestEditUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser: &domain.User{
+			returnUser: domain.User{
 				ID:       1,
 				Login:    "testingLogin",
 				Surname:  "testingSurname2",
@@ -270,9 +266,9 @@ func TestEditUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnError:          nil,
-			callRepositoryMethod: true,
-			returnRepo: &domain.User{
+			returnError:            nil,
+			isCallRepositoryMethod: true,
+			returnRepo: domain.User{
 				ID:       1,
 				Login:    "testingLogin",
 				Surname:  "testingSurname2",
@@ -281,99 +277,135 @@ func TestEditUser(t *testing.T) {
 				Password: "qeqwe12",
 			},
 			returnErrorRepo: nil,
-			checkError:      false,
+			isCheckError:    false,
 		},
 		{
-			name:                 "error",
-			inputUser:            domain.User{},
-			returnUser:           nil,
-			returnError:          domain.ErrUserNotFound,
-			callRepositoryMethod: true,
-			returnErrorRepo:      testErr,
-			checkError:           true,
+			name: "error",
+			inputUser: domain.User{
+				ID:       1,
+				Login:    "grgrgrgr",
+				Surname:  "testingSurname",
+				Name:     "testungName",
+				Role:     1,
+				Password: "qeqwe12",
+			},
+			returnUser:             domain.User{},
+			returnError:            domain.ErrUserNotEdited,
+			isCallRepositoryMethod: true,
+			returnErrorRepo:        testErr,
+			isCheckError:           true,
+		},
+		{
+			name: "no login",
+			inputUser: domain.User{
+				ID:       1,
+				Login:    "",
+				Surname:  "testingSurname",
+				Name:     "testungName",
+				Role:     1,
+				Password: "qeqwe12",
+			},
+			returnUser:             domain.User{},
+			returnError:            domain.ErrNoLogin,
+			isCallRepositoryMethod: false,
+			returnErrorRepo:        testErr,
+			isCheckError:           true,
+		},
+		{
+			name: "no surname",
+			inputUser: domain.User{
+				ID:       1,
+				Login:    "qwqwqwwq",
+				Surname:  "",
+				Name:     "testungName",
+				Role:     1,
+				Password: "qeqwe12",
+			},
+			returnUser:             domain.User{},
+			returnError:            domain.ErrNoSurname,
+			isCallRepositoryMethod: false,
+			returnErrorRepo:        testErr,
+			isCheckError:           true,
 		},
 	}
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
 			c := gomock.NewController(t)
+			defer c.Finish()
+
 			mockUsersRepository := mock_domain.NewMockUsersStorage(c)
 			usersService := NewUserService(mockUsersRepository)
 
-			if testCase.callRepositoryMethod {
-				mockUsersRepository.EXPECT().Edit(testCase.inputUser).Return(testCase.returnRepo, testCase.returnErrorRepo)
+			if testCase.isCallRepositoryMethod {
+				mockUsersRepository.
+					EXPECT().
+					Edit(testCase.inputUser).
+					Return(testCase.returnRepo, testCase.returnErrorRepo)
 			}
 
 			respUser, err := usersService.Edit(testCase.inputUser)
-			if testCase.checkError {
+			if testCase.isCheckError {
 				assert.ErrorIs(t, err, testCase.returnError)
 			} else {
 				assert.NoError(t, err)
-				assert.EqualValues(t, *testCase.returnUser, *respUser)
+				assert.EqualValues(t, testCase.returnUser, respUser)
 			}
-
-			defer c.Finish()
 		})
 	}
 }
 
 func TestDeleteUser(t *testing.T) {
 	testTable := []struct {
-		name                 string
-		idUser               int
-		returnError          error
-		callRepositoryMethod bool
-		returnRepo           bool
-		returnErrorRepo      error
-		checkError           bool
+		name                   string
+		idUser                 int
+		returnError            error
+		isCallRepositoryMethod bool
+		returnRepo             bool
+		returnErrorRepo        error
+		isCheckError           bool
 	}{
 		{
-			name:                 "ok",
-			idUser:               1,
-			returnError:          nil,
-			callRepositoryMethod: true,
-			returnRepo:           true,
-			returnErrorRepo:      nil,
-			checkError:           false,
+			name:                   "ok",
+			idUser:                 1,
+			returnError:            nil,
+			isCallRepositoryMethod: true,
+			returnRepo:             true,
+			returnErrorRepo:        nil,
+			isCheckError:           false,
 		},
 		{
-			name:                 "error",
-			idUser:               1,
-			returnError:          testErr,
-			callRepositoryMethod: true,
-			returnRepo:           true,
-			returnErrorRepo:      testErr,
-			checkError:           true,
-		},
-		{
-			name:                 "false isDeleted",
-			idUser:               1,
-			returnError:          testErr,
-			callRepositoryMethod: true,
-			returnRepo:           true,
-			returnErrorRepo:      testErr,
-			checkError:           true,
+			name:                   "error",
+			idUser:                 1,
+			returnError:            testErr,
+			isCallRepositoryMethod: true,
+			returnRepo:             true,
+			returnErrorRepo:        testErr,
+			isCheckError:           true,
 		},
 	}
 
 	for _, testCase := range testTable {
 		t.Run(testCase.name, func(t *testing.T) {
 			c := gomock.NewController(t)
+			defer c.Finish()
+
 			mockUsersRepository := mock_domain.NewMockUsersStorage(c)
 			usersService := NewUserService(mockUsersRepository)
 
-			if testCase.callRepositoryMethod {
-				mockUsersRepository.EXPECT().Delete(testCase.idUser).Return(testCase.returnRepo, testCase.returnErrorRepo)
+			if testCase.isCallRepositoryMethod {
+				mockUsersRepository.
+					EXPECT().
+					Delete(testCase.idUser).
+					Return(testCase.returnRepo, testCase.returnErrorRepo)
 			}
 
 			err := usersService.Delete(testCase.idUser)
-			if testCase.checkError {
+			if testCase.isCheckError {
 				assert.ErrorIs(t, err, testCase.returnError)
 			} else {
 				assert.NoError(t, err)
 			}
-
-			defer c.Finish()
 		})
 	}
 }

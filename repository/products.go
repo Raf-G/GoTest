@@ -39,11 +39,11 @@ func (rep *ProductRepository) AddProduct(item domain.Product) (*domain.Product, 
 	return &item, nil
 }
 
-func (rep *ProductRepository) GetProduct(id int) (domain.Product, error) {
+func (rep *ProductRepository) GetProduct(id int) (*domain.Product, error) {
 	rows, err := rep.db.Query("select id, name, description, price from toy_shop.products WHERE products.id =?", id)
 	if err != nil {
 		log.Println(err)
-		return domain.Product{}, err
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -53,11 +53,11 @@ func (rep *ProductRepository) GetProduct(id int) (domain.Product, error) {
 		err = rows.Scan(&product.ID, &product.Name, &product.Description, &product.Price)
 		if err != nil {
 			fmt.Println(err)
-			return domain.Product{}, err
+			return nil, err
 		}
 	}
 
-	return product, nil
+	return &product, nil
 }
 
 func (rep *ProductRepository) EditProduct(product domain.Product) (domain.Product, error) {

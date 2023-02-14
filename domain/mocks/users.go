@@ -35,10 +35,10 @@ func (m *MockUsersStorage) EXPECT() *MockUsersStorageMockRecorder {
 }
 
 // Add mocks base method.
-func (m *MockUsersStorage) Add(arg0 domain.User) (*domain.User, error) {
+func (m *MockUsersStorage) Add(arg0 domain.User) (domain.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Add", arg0)
-	ret0, _ := ret[0].(*domain.User)
+	ret0, _ := ret[0].(domain.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -65,10 +65,10 @@ func (mr *MockUsersStorageMockRecorder) Delete(arg0 interface{}) *gomock.Call {
 }
 
 // Edit mocks base method.
-func (m *MockUsersStorage) Edit(arg0 domain.User) (*domain.User, error) {
+func (m *MockUsersStorage) Edit(arg0 domain.User) (domain.User, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Edit", arg0)
-	ret0, _ := ret[0].(*domain.User)
+	ret0, _ := ret[0].(domain.User)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

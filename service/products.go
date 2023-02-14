@@ -36,7 +36,7 @@ func (res *ProductService) GetProduct(id int) (domain.Product, error) {
 		return domain.Product{}, errors.Wrap(err, errStr)
 	}
 
-	return product, nil
+	return *product, nil
 }
 
 func (res *ProductService) EditProduct(product domain.Product) (domain.Product, error) {

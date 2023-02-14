@@ -1,5 +1,7 @@
 package domain
 
+//go:generate mockgen -source=roles.go -destination=mocks/roles.go
+
 type RolesStorage interface {
 	GetRole(int) (Role, error)
 	GetRoles() ([]Role, error)

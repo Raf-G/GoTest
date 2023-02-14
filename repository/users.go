@@ -16,25 +16,25 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 	return &UserRepository{db}
 }
 
-func (res *UserRepository) Add(item domain.User) (*domain.User, error) {
+func (res *UserRepository) Add(item domain.User) (domain.User, error) {
 	errStr := "[repository] user not added to the database"
 
 	query := "INSERT INTO `users` (`login`, `name`, `surname`, `password`, `role_id`) VALUES (?, ?, ?, ?, ?)"
 	insertResult, err := res.db.ExecContext(context.Background(), query, item.Login, item.Name, item.Surname, item.Password, item.Role)
 	if err != nil {
 		log.Printf("%s: %s", errStr, err)
-		return &item, err
+		return item, err
 	}
 
 	id, err := insertResult.LastInsertId()
 	if err != nil {
 		log.Printf("%s: %s", errStr, err)
-		return &item, err
+		return item, err
 	}
 
 	item.ID = int(id)
 	log.Printf("inserted id: %d", id)
-	return &item, nil
+	return item, nil
 }
 
 func (res *UserRepository) GetUser(id int) (*domain.User, error) {
@@ -45,6 +45,10 @@ func (res *UserRepository) GetUser(id int) (*domain.User, error) {
 	user := domain.User{}
 
 	err := row.Scan(&user.ID, &user.Login, &user.Surname, &user.Name, &user.Password, &user.Role)
+	if err == sql.ErrNoRows {
+		fmt.Println(errStr, err)
+		return nil, nil
+	}
 	if err != nil {
 		fmt.Println(errStr, err)
 		return nil, err
@@ -74,22 +78,22 @@ func (res *UserRepository) GetUsers() ([]domain.User, error) {
 	return users, nil
 }
 
-func (res *UserRepository) Edit(user domain.User) (*domain.User, error) {
+func (res *UserRepository) Edit(user domain.User) (domain.User, error) {
 	errStr := "[repository] user not edit from the database: "
 
 	stmt, err := res.db.Prepare("UPDATE users SET login = ?, name = ?, surname = ? , password = ?, role_id = ? WHERE id = ?")
 	if err != nil {
 		fmt.Println(errStr, err)
-		return nil, err
+		return domain.User{}, err
 	}
 
 	_, err = stmt.Exec(user.Login, user.Name, user.Surname, user.Password, user.Role, user.ID)
 	if err != nil {
 		fmt.Println(errStr, err)
-		return nil, err
+		return domain.User{}, err
 	}
 
-	return &user, nil
+	return user, nil
 }
 
 func (res *UserRepository) Delete(userID int) (bool, error) {

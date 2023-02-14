@@ -1,5 +1,7 @@
 package domain
 
+//go:generate mockgen -source=reviews.go -destination=mocks/reviews.go
+
 type ReviewsStorage interface {
 	AddReview(Review) (*Review, error)
 	EditReview(Review) error
