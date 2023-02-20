@@ -20,14 +20,13 @@ type App struct {
 }
 
 func NewApp() App {
-	address := fmt.Sprintf("%s:%d", "localhost", 8181)
 	db, err := sql.Open("mysql", "root:root@/toy_shop")
 	if err != nil {
 		log.Println(err)
 	}
 
 	router := mux.NewRouter()
-	app := App{address, router, db}
+	app := App{":8181", router, db}
 	app.setRouters()
 
 	return app
@@ -93,6 +92,12 @@ func (app *App) setRouters() {
 	// Statuses
 	app.router.HandleFunc("/api/statuses/{statusId}", statusesHandler.GetStatus).Methods("GET")
 	app.router.HandleFunc("/api/statuses", statusesHandler.GetStatuses).Methods("GET")
+
+	app.router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintf(w, "Welcome to Api.")
+	})
+
+	fmt.Println("Server listening!")
 }
 
 func (app *App) Run() {
@@ -108,6 +113,7 @@ func (app *App) Run() {
 	if err != nil {
 		log.Println(err)
 	}
+	log.Println("Start server")
 }
 
 func (app *App) Stop() {
