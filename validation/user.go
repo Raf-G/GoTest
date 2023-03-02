@@ -5,13 +5,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-func UserValidation(item domain.User) error {
-	if item.Login == "" {
-		return errors.Wrapf(domain.ErrNoLogin, "[validation] item %+v validation failed", item)
+func UserValidation(u domain.User) error {
+	if u.Login == "" {
+		return errors.Wrapf(domain.ErrNoLogin, "user %+v validation failed", u)
 	}
 
-	if item.Surname == "" {
-		return errors.Wrapf(domain.ErrNoSurname, "[validation] item %+v validation failed", item)
+	if u.Surname == "" {
+		return errors.Wrapf(domain.ErrNoSurname, "user %+v validation failed", u)
 	}
 
 	return nil

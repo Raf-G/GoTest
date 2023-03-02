@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"example.com/m/v2/domain"
+	"example.com/m/v2/service"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -10,33 +11,35 @@ import (
 )
 
 type ProductHandlers struct {
-	service domain.ProductsService
+	service service.ProductsService
 }
 
-func NewProductHandler(service domain.ProductsService) ProductHandlers {
+func NewProductHandler(service service.ProductsService) ProductHandlers {
 	return ProductHandlers{service}
 }
 
 func (res *ProductHandlers) AddProduct(w http.ResponseWriter, r *http.Request) {
-	var item domain.Product
+	var p domain.Product
 
-	err := json.NewDecoder(r.Body).Decode(&item)
+	err := json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "wrong data in request body", 400)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	newItem, err := res.service.AddProduct(item)
+	newProduct, err := res.service.AddProduct(p)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(&newItem)
+	err = json.NewEncoder(w).Encode(&newProduct)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -88,7 +91,7 @@ func (ch *ProductHandlers) GetProducts(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (res *ProductHandlers) EditProduct(w http.ResponseWriter, r *http.Request) {
-	var product domain.Product
+	var p domain.Product
 
 	vars := mux.Vars(r)
 	productID, err := strconv.Atoi(vars["productId"])
@@ -98,23 +101,24 @@ func (res *ProductHandlers) EditProduct(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err = json.NewDecoder(r.Body).Decode(&product)
+	err = json.NewDecoder(r.Body).Decode(&p)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "wrong data in request body", 400)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	product.ID = productID
+	p.ID = productID
 
-	newItem, err := res.service.EditProduct(product)
+	newProduct, err := res.service.EditProduct(p)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(&newItem)
+	err = json.NewEncoder(w).Encode(&newProduct)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

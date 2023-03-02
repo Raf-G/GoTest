@@ -2,22 +2,6 @@ package domain
 
 //go:generate mockgen -source=baskets.go -destination=mocks/baskets.go
 
-type BasketsStorage interface {
-	AddBasketProduct(BasketProduct) (BasketProduct, error)
-	GetBasketProduct(int, int) (*BasketProduct, error)
-	GetBasketProducts(int) ([]BasketProduct, error)
-	EditBasketProduct(BasketProduct) (BasketProduct, error)
-	DeleteBasketProduct(int) (bool, error)
-	GetBasket(int) (*Basket, error)
-}
-
-type BasketsService interface {
-	AddProductToBasket(BasketProduct) (BasketProduct, error)
-	DecreaseQuantityProductToBasket(BasketProduct) (BasketProduct, error)
-	DeleteProductToBasket(int) error
-	GetBasket(int) (Basket, error)
-}
-
 type BasketProduct struct {
 	ID         int `json:"id"`
 	BasketID   int `json:"basket_id"`

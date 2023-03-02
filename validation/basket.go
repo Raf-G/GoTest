@@ -5,17 +5,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-func BasketProductValidation(item domain.BasketProduct) error {
-	if item.BasketID == 0 {
-		return errors.Wrapf(domain.ErrBasketProductNoBasketID, "[validation] basket product %+v validation failed", item)
+func BasketProductValidation(b domain.BasketProduct) error {
+	if b.BasketID == 0 {
+		return errors.Wrapf(domain.ErrBasketProductNoBasketID, "basket product %+v validation failed", b)
 	}
 
-	if item.ProductID == 0 {
-		return errors.Wrapf(domain.ErrBasketProductNoProductID, "[validation] basket product %+v validation failed", item)
+	if b.ProductID == 0 {
+		return errors.Wrapf(domain.ErrBasketProductNoProductID, "basket product %+v validation failed", b)
 	}
 
-	if item.Count == 0 {
-		return errors.Wrapf(domain.ErrBasketProductNoCount, "[validation] basket product %+v validation failed", item)
+	if b.Count == 0 {
+		return errors.Wrapf(domain.ErrBasketProductNoCount, "basket product %+v validation failed", b)
 	}
 
 	return nil

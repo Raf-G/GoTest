@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"example.com/m/v2/domain"
+	"example.com/m/v2/service"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -10,10 +11,10 @@ import (
 )
 
 type BasketHandlers struct {
-	service domain.BasketsService
+	service service.BasketsService
 }
 
-func NewBasketHandler(service domain.BasketsService) BasketHandlers {
+func NewBasketHandler(service service.BasketsService) BasketHandlers {
 	return BasketHandlers{service}
 }
 
@@ -36,23 +37,24 @@ func (ch *BasketHandlers) GetBasket(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (res *BasketHandlers) AddProductToBasket(w http.ResponseWriter, r *http.Request) {
-	var item domain.BasketProduct
+	var b domain.BasketProduct
 
-	err := json.NewDecoder(r.Body).Decode(&item)
+	err := json.NewDecoder(r.Body).Decode(&b)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "wrong data in request body", 400)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	newItem, err := res.service.AddProductToBasket(item)
+	newBasket, err := res.service.AddProductToBasket(b)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(&newItem)
+	err = json.NewEncoder(w).Encode(&newBasket)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -83,7 +85,7 @@ func (res *BasketHandlers) DeleteProductToBasket(w http.ResponseWriter, r *http.
 }
 
 func (res *BasketHandlers) DecreaseQuantityProductToBasket(w http.ResponseWriter, r *http.Request) {
-	var item domain.BasketProduct
+	var b domain.BasketProduct
 
 	vars := mux.Vars(r)
 
@@ -101,17 +103,17 @@ func (res *BasketHandlers) DecreaseQuantityProductToBasket(w http.ResponseWriter
 		return
 	}
 
-	item.BasketID = basketID
-	item.ProductID = productID
+	b.BasketID = basketID
+	b.ProductID = productID
 
-	newItem, err := res.service.DecreaseQuantityProductToBasket(item)
+	newProduct, err := res.service.DecreaseQuantityProductToBasket(b)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	err = json.NewEncoder(w).Encode(&newItem)
+	err = json.NewEncoder(w).Encode(&newProduct)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

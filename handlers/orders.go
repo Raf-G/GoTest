@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"example.com/m/v2/domain"
+	"example.com/m/v2/service"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -10,10 +10,10 @@ import (
 )
 
 type OrderHandlers struct {
-	service domain.OrdersService
+	service service.OrdersService
 }
 
-func NewOrderHandler(service domain.OrdersService) OrderHandlers {
+func NewOrderHandler(service service.OrdersService) OrderHandlers {
 	return OrderHandlers{service}
 }
 

@@ -16,14 +16,14 @@ type jsonRole struct {
 	Name string `json:"name"`
 }
 
-func jsonUserFromUser(item domain.User) jsonUser {
-	return jsonUser{ID: item.ID, Login: item.Login, Surname: item.Surname, Name: item.Name, Password: item.Password, Role: item.Role}
+func jsonUserFromUser(u domain.User) jsonUser {
+	return jsonUser{ID: u.ID, Login: u.Login, Surname: u.Surname, Name: u.Name, Password: u.Password, Role: u.Role}
 }
 
-func userFromJSONUser(jsonItem jsonUser) domain.User {
-	return domain.User{ID: jsonItem.ID, Login: jsonItem.Login, Surname: jsonItem.Surname, Name: jsonItem.Name, Password: jsonItem.Password, Role: jsonItem.Role}
+func userFromJSONUser(u jsonUser) domain.User {
+	return domain.User{ID: u.ID, Login: u.Login, Surname: u.Surname, Name: u.Name, Password: u.Password, Role: u.Role}
 }
 
-func jsonRoleFromRole(item domain.Role) jsonRole {
-	return jsonRole{ID: item.ID, Name: item.Name}
+func jsonRoleFromRole(u domain.Role) jsonRole {
+	return jsonRole{ID: u.ID, Name: u.Name}
 }

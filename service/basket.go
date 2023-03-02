@@ -2,86 +2,96 @@ package service
 
 import (
 	"example.com/m/v2/domain"
+	"example.com/m/v2/repository"
 	"example.com/m/v2/validation"
 	"fmt"
 	"github.com/pkg/errors"
 )
 
-type BasketService struct {
-	store        domain.BasketsStorage
-	storeProduct domain.ProductsStorage
+//go:generate mockgen -source=baskets.go -destination=mocks/baskets.go
+
+type BasketsService interface {
+	AddProductToBasket(domain.BasketProduct) (domain.BasketProduct, error)
+	DecreaseQuantityProductToBasket(domain.BasketProduct) (domain.BasketProduct, error)
+	DeleteProductToBasket(int) error
+	GetBasket(int) (domain.Basket, error)
 }
 
-func NewBasketService(storage domain.BasketsStorage, storageProduct domain.ProductsStorage) *BasketService {
+type BasketService struct {
+	store        repository.BasketsStorage
+	storeProduct repository.ProductsStorage
+}
+
+func NewBasketService(storage repository.BasketsStorage, storageProduct repository.ProductsStorage) *BasketService {
 	return &BasketService{storage, storageProduct}
 }
 
 func (cs *BasketService) GetBasket(userID int) (domain.Basket, error) {
-	errStr := "[services] basket not fetched"
+	errStr := "basket not fetched"
 
-	var basket domain.Basket
+	var b domain.Basket
 
 	c, err := cs.store.GetBasket(userID)
 	if err != nil {
-		return basket, errors.Wrap(err, errStr)
+		return b, errors.Wrap(err, errStr)
 	}
-	basket = *c
-	basket.UserID = userID
+	b = *c
+	b.UserID = userID
 
 	// Calculation all price basket
 	var totalPrice int
 
-	for _, item := range basket.Products {
-		totalPrice += item.TotalPrice
+	for _, product := range b.Products {
+		totalPrice += product.TotalPrice
 	}
 
-	basket.TotalPrice = totalPrice
+	b.TotalPrice = totalPrice
 
-	return basket, nil
+	return b, nil
 }
 
-func (res *BasketService) AddProductToBasket(item domain.BasketProduct) (domain.BasketProduct, error) {
-	errStr := "[services] product to basket not added"
+func (res *BasketService) AddProductToBasket(u domain.BasketProduct) (domain.BasketProduct, error) {
+	errStr := "product to basket not added"
 
-	err := validation.BasketProductValidation(item)
+	err := validation.BasketProductValidation(u)
 	if err != nil {
-		return item, errors.Wrap(err, errStr)
+		return u, errors.Wrap(err, errStr)
 	}
 
-	existingProduct, err := res.store.GetBasketProduct(item.BasketID, item.ProductID)
+	existingProduct, err := res.store.GetBasketProduct(u.BasketID, u.ProductID)
 	if err == nil && existingProduct != nil {
 		existingProduct.Count += 1
 
 		newProduct, errEdit := res.store.EditBasketProduct(*existingProduct)
 		if errEdit != nil {
-			return item, errors.Wrap(domain.ErrBasketProductNotFound, errStr)
+			return u, errors.Wrap(domain.ErrBasketProductNotFound, errStr)
 		}
 
 		return newProduct, nil
 	}
 
-	itemDB, err := res.store.AddBasketProduct(item)
+	productDB, err := res.store.AddBasketProduct(u)
 	if err != nil {
-		return item, errors.Wrap(err, errStr)
+		return u, errors.Wrap(err, errStr)
 	}
 
-	errProduct := "[services] product not fetched"
-	product, err := res.storeProduct.GetProduct(item.ProductID)
+	errProduct := "product not fetched"
+	product, err := res.storeProduct.GetProduct(u.ProductID)
 
 	if err != nil {
-		return item, errors.Wrap(err, errProduct)
+		return u, errors.Wrap(err, errProduct)
 	}
 
-	itemDB.TotalPrice = product.Price * itemDB.Count
+	productDB.TotalPrice = product.Price * productDB.Count
 
-	return itemDB, nil
+	return productDB, nil
 }
 
-func (res *BasketService) DecreaseQuantityProductToBasket(product domain.BasketProduct) (domain.BasketProduct, error) {
-	errStr := "[services] product to basket not edit"
-	errProduct := "[services] product to basket not fetched"
+func (res *BasketService) DecreaseQuantityProductToBasket(p domain.BasketProduct) (domain.BasketProduct, error) {
+	errStr := "product to basket not edit"
+	errProduct := "product to basket not fetched"
 
-	existingProduct, err := res.store.GetBasketProduct(product.BasketID, product.ProductID)
+	existingProduct, err := res.store.GetBasketProduct(p.BasketID, p.ProductID)
 
 	if err == nil && existingProduct != nil {
 		if existingProduct.Count <= 1 {
@@ -103,25 +113,25 @@ func (res *BasketService) DecreaseQuantityProductToBasket(product domain.BasketP
 
 		_, errEdit := res.store.EditBasketProduct(*existingProduct)
 		if errEdit != nil {
-			return product, errors.Wrap(domain.ErrBasketProductNotFound, errStr)
+			return p, errors.Wrap(domain.ErrBasketProductNotFound, errStr)
 		}
 
-		productInfo, errGet := res.storeProduct.GetProduct(product.ProductID)
+		productInfo, errGet := res.storeProduct.GetProduct(p.ProductID)
 		if errGet != nil {
-			return product, errors.Wrap(errGet, errProduct)
+			return p, errors.Wrap(errGet, errProduct)
 		}
 
 		existingProduct.TotalPrice = productInfo.Price * existingProduct.Count
 		return *existingProduct, nil
 	}
 
-	product.Count -= 1
-	product.TotalPrice = 0
-	return product, nil
+	p.Count -= 1
+	p.TotalPrice = 0
+	return p, nil
 }
 
 func (res *BasketService) DeleteProductToBasket(basketProductID int) error {
-	errStr := fmt.Sprintf("[services] product to basket (basketProductID %d) not deleted", basketProductID)
+	errStr := fmt.Sprintf("product to basket (basketProductID %d) not deleted", basketProductID)
 
 	isDeleted, err := res.store.DeleteBasketProduct(basketProductID)
 	if err != nil {

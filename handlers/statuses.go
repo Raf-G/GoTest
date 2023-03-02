@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"example.com/m/v2/domain"
+	"example.com/m/v2/service"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -10,10 +10,10 @@ import (
 )
 
 type StatusHandlers struct {
-	service domain.StatusesService
+	service service.StatusesService
 }
 
-func NewStatusHandler(service domain.StatusesService) StatusHandlers {
+func NewStatusHandler(service service.StatusesService) StatusHandlers {
 	return StatusHandlers{service}
 }
 

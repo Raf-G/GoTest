@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"example.com/m/v2/domain"
+	"example.com/m/v2/service"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -10,10 +10,10 @@ import (
 )
 
 type RoleHandlers struct {
-	service domain.RolesService
+	service service.RolesService
 }
 
-func NewRoleHandler(service domain.RolesService) RoleHandlers {
+func NewRoleHandler(service service.RolesService) RoleHandlers {
 	return RoleHandlers{service}
 }
 
@@ -34,9 +34,9 @@ func (res *RoleHandlers) GetRole(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonItem := jsonRoleFromRole(role)
+	jsonRole := jsonRoleFromRole(role)
 
-	err = json.NewEncoder(w).Encode(&jsonItem)
+	err = json.NewEncoder(w).Encode(&jsonRole)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

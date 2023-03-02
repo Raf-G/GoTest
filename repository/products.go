@@ -4,9 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"example.com/m/v2/domain"
-	"fmt"
 	"log"
 )
+
+//go:generate mockgen -source=products.go -destination=mocks/products.go
+
+type ProductsStorage interface {
+	AddProduct(domain.Product) (*domain.Product, error)
+	GetProduct(int) (*domain.Product, error)
+	EditProduct(domain.Product) (domain.Product, error)
+	DeleteProduct(int) (bool, error)
+	GetProducts() ([]domain.Product, error)
+}
 
 type ProductRepository struct {
 	db *sql.DB
@@ -16,33 +25,27 @@ func NewProductRepository(db *sql.DB) *ProductRepository {
 	return &ProductRepository{db}
 }
 
-func (rep *ProductRepository) AddProduct(item domain.Product) (*domain.Product, error) {
-	errStr := "[repository] product not added to the database"
-
+func (rep *ProductRepository) AddProduct(u domain.Product) (*domain.Product, error) {
 	query := "INSERT INTO `products` (`name`, `description`, `price`) VALUES (?, ?, ?)"
 
-	insertResult, err := rep.db.ExecContext(context.Background(), query, item.Name, item.Description, item.Price)
+	insertResult, err := rep.db.ExecContext(context.Background(), query, u.Name, u.Description, u.Price)
 	if err != nil {
-		log.Printf("%s: %s\n", errStr, err)
-		return &item, err
+		return &u, err
 	}
 
 	id, err := insertResult.LastInsertId()
 	if err != nil {
-		log.Printf("%s: %s\n", errStr, err)
-		return &item, err
+		return &u, err
 	}
 
-	item.ID = int(id)
-	log.Printf("inserted id: %d", id)
+	u.ID = int(id)
 
-	return &item, nil
+	return &u, nil
 }
 
 func (rep *ProductRepository) GetProduct(id int) (*domain.Product, error) {
 	rows, err := rep.db.Query("select id, name, description, price from toy_shop.products WHERE products.id =?", id)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -52,7 +55,6 @@ func (rep *ProductRepository) GetProduct(id int) (*domain.Product, error) {
 	for rows.Next() {
 		err = rows.Scan(&product.ID, &product.Name, &product.Description, &product.Price)
 		if err != nil {
-			fmt.Println(err)
 			return nil, err
 		}
 	}
@@ -61,17 +63,13 @@ func (rep *ProductRepository) GetProduct(id int) (*domain.Product, error) {
 }
 
 func (rep *ProductRepository) EditProduct(product domain.Product) (domain.Product, error) {
-	errStr := "[repository] product not edit from the database: "
-
 	stmt, err := rep.db.Prepare("UPDATE products SET name = ?, description = ?, price = ? WHERE id = ?")
 	if err != nil {
-		fmt.Println(errStr, err)
 		return domain.Product{}, err
 	}
 
 	_, err = stmt.Exec(product.Name, product.Description, product.Price, product.ID)
 	if err != nil {
-		fmt.Println(errStr, err)
 		return domain.Product{}, err
 	}
 
@@ -79,11 +77,8 @@ func (rep *ProductRepository) EditProduct(product domain.Product) (domain.Produc
 }
 
 func (rep *ProductRepository) DeleteProduct(productID int) (bool, error) {
-	errStr := "[repository] product not deleted from the database: "
-
 	_, err := rep.db.Exec("DELETE FROM products WHERE id = ?", productID)
 	if err != nil {
-		fmt.Println(errStr, err)
 		return false, err
 	}
 
@@ -104,7 +99,6 @@ func (rep *ProductRepository) GetProducts() ([]domain.Product, error) {
 		product := domain.Product{}
 		err = rows.Scan(&product.ID, &product.Name, &product.Description, &product.Price)
 		if err != nil {
-			fmt.Println(err)
 			return nil, err
 		}
 		products = append(products, product)

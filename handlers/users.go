@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
-	"example.com/m/v2/domain"
+	"example.com/m/v2/service"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
@@ -10,35 +10,37 @@ import (
 )
 
 type UserHandlers struct {
-	service domain.UsersService
+	service service.UsersService
 }
 
-func NewUserHandler(service domain.UsersService) UserHandlers {
+func NewUserHandler(service service.UsersService) UserHandlers {
 	return UserHandlers{service}
 }
 
 func (res *UserHandlers) Add(w http.ResponseWriter, r *http.Request) {
-	var item jsonUser
+	var u jsonUser
 
-	err := json.NewDecoder(r.Body).Decode(&item)
+	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "wrong data in request body", 400)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	newItem, err := res.service.Add(userFromJSONUser(item))
+	newUser, err := res.service.Add(userFromJSONUser(u))
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	jsonItem := jsonUserFromUser(newItem)
+	jsonUser := jsonUserFromUser(newUser)
 
-	err = json.NewEncoder(w).Encode(&jsonItem)
+	err = json.NewEncoder(w).Encode(&jsonUser)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -62,11 +64,12 @@ func (res *UserHandlers) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	jsonItem := jsonUserFromUser(user)
+	jsonUser := jsonUserFromUser(user)
 
-	err = json.NewEncoder(w).Encode(&jsonItem)
+	err = json.NewEncoder(w).Encode(&jsonUser)
 	if err != nil {
 		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
@@ -92,7 +95,7 @@ func (res *UserHandlers) GetUsers(w http.ResponseWriter, _ *http.Request) {
 }
 
 func (res *UserHandlers) Edit(w http.ResponseWriter, r *http.Request) {
-	var item jsonUser
+	var u jsonUser
 
 	vars := mux.Vars(r)
 	userID, err := strconv.Atoi(vars["userId"])
@@ -102,25 +105,26 @@ func (res *UserHandlers) Edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = json.NewDecoder(r.Body).Decode(&item)
+	err = json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		log.Println(err)
 		http.Error(w, "wrong data in request body", 400)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	item.ID = userID
+	u.ID = userID
 
-	newItem, err := res.service.Edit(userFromJSONUser(item))
+	newUser, err := res.service.Edit(userFromJSONUser(u))
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	jsonItem := jsonUserFromUser(newItem)
+	jsonUser := jsonUserFromUser(newUser)
 
-	err = json.NewEncoder(w).Encode(&jsonItem)
+	err = json.NewEncoder(w).Encode(&jsonUser)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

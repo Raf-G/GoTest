@@ -2,35 +2,46 @@ package service
 
 import (
 	"example.com/m/v2/domain"
+	"example.com/m/v2/repository"
 	"fmt"
 	"github.com/pkg/errors"
 )
 
-type ProductService struct {
-	store domain.ProductsStorage
+//go:generate mockgen -source=products.go -destination=mocks/products.go
+
+type ProductsService interface {
+	AddProduct(domain.Product) (domain.Product, error)
+	GetProduct(int) (domain.Product, error)
+	EditProduct(domain.Product) (domain.Product, error)
+	DeleteProduct(int) error
+	GetAllProducts() ([]domain.Product, error)
 }
 
-func NewProductService(storage domain.ProductsStorage) *ProductService {
+type ProductService struct {
+	store repository.ProductsStorage
+}
+
+func NewProductService(storage repository.ProductsStorage) *ProductService {
 	return &ProductService{storage}
 }
 
-func (res *ProductService) AddProduct(item domain.Product) (domain.Product, error) {
-	errStr := "[services] product not added"
+func (res *ProductService) AddProduct(p domain.Product) (domain.Product, error) {
+	errStr := "product not added"
 
-	itemDB, err := res.store.AddProduct(item)
+	productDB, err := res.store.AddProduct(p)
 	if err != nil {
-		return item, errors.Wrap(err, errStr)
+		return p, errors.Wrap(err, errStr)
 	}
 
-	if itemDB == nil {
-		return item, errors.Wrap(domain.ErrProductNotCreated, errStr)
+	if productDB == nil {
+		return p, errors.Wrap(domain.ErrProductNotCreated, errStr)
 	}
 
-	return *itemDB, nil
+	return *productDB, nil
 }
 
 func (res *ProductService) GetProduct(id int) (domain.Product, error) {
-	errStr := "[services] product not fetched"
+	errStr := "product not fetched"
 	product, err := res.store.GetProduct(id)
 	if err != nil {
 		return domain.Product{}, errors.Wrap(err, errStr)
@@ -39,10 +50,10 @@ func (res *ProductService) GetProduct(id int) (domain.Product, error) {
 	return *product, nil
 }
 
-func (res *ProductService) EditProduct(product domain.Product) (domain.Product, error) {
-	errStr := "[services] product not edit"
+func (res *ProductService) EditProduct(p domain.Product) (domain.Product, error) {
+	errStr := "product not edit"
 
-	newProduct, err := res.store.EditProduct(product)
+	newProduct, err := res.store.EditProduct(p)
 	if err != nil {
 		return domain.Product{}, errors.Wrap(domain.ErrUserNotFound, errStr)
 	}
@@ -51,7 +62,7 @@ func (res *ProductService) EditProduct(product domain.Product) (domain.Product, 
 }
 
 func (res *ProductService) DeleteProduct(productID int) error {
-	errStr := fmt.Sprintf("[services] product (productID %d) not deleted", productID)
+	errStr := fmt.Sprintf("product (productID %d) not deleted", productID)
 
 	isDeleted, err := res.store.DeleteProduct(productID)
 	if err != nil {
@@ -66,7 +77,7 @@ func (res *ProductService) DeleteProduct(productID int) error {
 }
 
 func (res *ProductService) GetAllProducts() ([]domain.Product, error) {
-	errStr := "[services] products not fetched"
+	errStr := "products not fetched"
 	c, err := res.store.GetProducts()
 	if err != nil {
 		return nil, errors.Wrap(err, errStr)

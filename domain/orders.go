@@ -2,22 +2,6 @@ package domain
 
 //go:generate mockgen -source=orders.go -destination=mocks/orders.go
 
-type OrdersStorage interface {
-	AddOrder(int) (int, error)
-	GetOrder(int) (Order, error)
-	DeleteOrder(int) (bool, error)
-	GetOrders() ([]Order, error)
-	AddProductOrder(ProductOrder) (int, error)
-	DeleteProductsOrder(int) (bool, error)
-}
-
-type OrdersService interface {
-	AddOrder(int) (Order, error)
-	GetOrder(int) (Order, error)
-	DeleteOrder(int) error
-	GetOrders() ([]Order, error)
-}
-
 type Order struct {
 	ID       int `json:"id"`
 	UserID   int `json:"user_id"`

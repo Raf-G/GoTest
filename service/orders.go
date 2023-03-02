@@ -2,23 +2,33 @@ package service
 
 import (
 	"example.com/m/v2/domain"
+	"example.com/m/v2/repository"
 	"fmt"
 	"github.com/pkg/errors"
 	"reflect"
 )
 
-type OrderService struct {
-	store        domain.OrdersStorage
-	storeBasket  domain.BasketsStorage
-	storeProduct domain.ProductsStorage
+//go:generate mockgen -source=orders.go -destination=mocks/orders.go
+
+type OrdersService interface {
+	AddOrder(int) (domain.Order, error)
+	GetOrder(int) (domain.Order, error)
+	DeleteOrder(int) error
+	GetOrders() ([]domain.Order, error)
 }
 
-func NewOrderService(storage domain.OrdersStorage, storageBasket domain.BasketsStorage, storageProduct domain.ProductsStorage) *OrderService {
+type OrderService struct {
+	store        repository.OrdersStorage
+	storeBasket  repository.BasketsStorage
+	storeProduct repository.ProductsStorage
+}
+
+func NewOrderService(storage repository.OrdersStorage, storageBasket repository.BasketsStorage, storageProduct repository.ProductsStorage) *OrderService {
 	return &OrderService{storage, storageBasket, storageProduct}
 }
 
 func (res *OrderService) AddOrder(userID int) (domain.Order, error) {
-	errStr := "[services] order not added"
+	errStr := " order not added"
 
 	_, err := res.storeBasket.GetBasket(userID)
 	if err != nil {
@@ -95,7 +105,7 @@ func (res *OrderService) AddOrder(userID int) (domain.Order, error) {
 }
 
 func (res *OrderService) GetOrder(orderID int) (domain.Order, error) {
-	errStr := fmt.Sprintf("[services] order (orderID %d) not fetched", orderID)
+	errStr := fmt.Sprintf("order (orderID %d) not fetched", orderID)
 
 	order, err := res.store.GetOrder(orderID)
 	if err != nil {
@@ -110,7 +120,7 @@ func (res *OrderService) GetOrder(orderID int) (domain.Order, error) {
 }
 
 func (res *OrderService) DeleteOrder(orderID int) error {
-	errStr := fmt.Sprintf("[services] order (orderID %d) not deleted", orderID)
+	errStr := fmt.Sprintf("order (orderID %d) not deleted", orderID)
 
 	isDeleted, err := res.store.DeleteProductsOrder(orderID)
 	if err != nil {
@@ -134,7 +144,7 @@ func (res *OrderService) DeleteOrder(orderID int) error {
 }
 
 func (res *OrderService) GetOrders() ([]domain.Order, error) {
-	errStr := "[services] orders not fetched"
+	errStr := "orders not fetched"
 	c, err := res.store.GetOrders()
 	if err != nil {
 		return nil, errors.Wrap(err, errStr)

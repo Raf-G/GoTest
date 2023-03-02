@@ -2,21 +2,29 @@ package service
 
 import (
 	"example.com/m/v2/domain"
+	"example.com/m/v2/repository"
 	"fmt"
 	"github.com/pkg/errors"
 	"reflect"
 )
 
-type StatusService struct {
-	store domain.StatusesStorage
+//go:generate mockgen -source=statuses.go -destination=mocks/statuses.go
+
+type StatusesService interface {
+	GetStatus(int) (domain.Status, error)
+	GetStatuses() ([]domain.Status, error)
 }
 
-func NewStatusService(storage domain.StatusesStorage) *StatusService {
+type StatusService struct {
+	store repository.StatusesStorage
+}
+
+func NewStatusService(storage repository.StatusesStorage) *StatusService {
 	return &StatusService{storage}
 }
 
 func (res *StatusService) GetStatus(statusID int) (domain.Status, error) {
-	errStr := fmt.Sprintf("[services] role (roleID %d) not fetched", statusID)
+	errStr := fmt.Sprintf("role (roleID %d) not fetched", statusID)
 
 	status, err := res.store.GetStatus(statusID)
 	if err != nil {
@@ -31,7 +39,7 @@ func (res *StatusService) GetStatus(statusID int) (domain.Status, error) {
 }
 
 func (res *StatusService) GetStatuses() ([]domain.Status, error) {
-	errStr := "[services] statuses not fetched"
+	errStr := "statuses not fetched"
 	c, err := res.store.GetStatuses()
 	if err != nil {
 		return nil, errors.Wrap(err, errStr)

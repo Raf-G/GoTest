@@ -4,9 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"example.com/m/v2/domain"
-	"fmt"
-	"log"
 )
+
+//go:generate mockgen -source=reviews.go -destination=mocks/reviews.go
+
+type ReviewsStorage interface {
+	AddReview(domain.Review) (*domain.Review, error)
+	EditReview(domain.Review) error
+	GetReview(int) (domain.Review, error)
+	DeleteReview(int) (bool, error)
+	GetReviewsProduct(int) ([]domain.Review, error)
+	GetReviews() ([]domain.Review, error)
+}
 
 type ReviewRepository struct {
 	db *sql.DB
@@ -16,38 +25,31 @@ func NewReviewRepository(db *sql.DB) *ReviewRepository {
 	return &ReviewRepository{db}
 }
 
-func (rep *ReviewRepository) AddReview(item domain.Review) (*domain.Review, error) {
-	errStr := "[repository] review not added to the database"
-
+func (rep *ReviewRepository) AddReview(r domain.Review) (*domain.Review, error) {
 	query := "INSERT INTO `reviews` (`user_id`, `product_id`, `description`, `grade`) VALUES (?, ?, ?, ?)"
-	insertResult, err := rep.db.ExecContext(context.Background(), query, item.UserID, item.ProductID, item.Description, item.Grade)
+	insertResult, err := rep.db.ExecContext(context.Background(), query, r.UserID, r.ProductID, r.Description, r.Grade)
 	if err != nil {
-		log.Printf("%s: %s", errStr, err)
-		return &item, err
+		return &r, err
 	}
+
 	id, err := insertResult.LastInsertId()
 	if err != nil {
-		log.Printf("%s: %s", errStr, err)
-		return &item, err
+		return &r, err
 	}
-	item.ID = int(id)
-	log.Printf("inserted id: %d", id)
 
-	return &item, nil
+	r.ID = int(id)
+
+	return &r, nil
 }
 
-func (rep *ReviewRepository) EditReview(review domain.Review) error {
-	errStr := "[repository] review not edit from the database: "
-
+func (rep *ReviewRepository) EditReview(r domain.Review) error {
 	stmt, err := rep.db.Prepare("UPDATE reviews SET description = ?, grade = ? WHERE id = ?")
 	if err != nil {
-		fmt.Println(errStr, err)
 		return err
 	}
 
-	_, err = stmt.Exec(review.Description, review.Grade, review.ID)
+	_, err = stmt.Exec(r.Description, r.Grade, r.ID)
 	if err != nil {
-		fmt.Println(errStr, err)
 		return err
 	}
 
@@ -56,23 +58,19 @@ func (rep *ReviewRepository) EditReview(review domain.Review) error {
 func (rep *ReviewRepository) GetReview(id int) (domain.Review, error) {
 	row := rep.db.QueryRow("select id, user_id, product_id, description, grade from reviews WHERE reviews.id =?", id)
 
-	review := domain.Review{}
+	r := domain.Review{}
 
-	err := row.Scan(&review.ID, &review.UserID, &review.ProductID, &review.Description, &review.Grade)
+	err := row.Scan(&r.ID, &r.UserID, &r.ProductID, &r.Description, &r.Grade)
 	if err != nil {
-		fmt.Println(err)
 		return domain.Review{}, err
 	}
 
-	return review, nil
+	return r, nil
 }
 
 func (rep *ReviewRepository) DeleteReview(reviewId int) (bool, error) {
-	errStr := "[repository] review not deleted from the database: "
-
 	_, err := rep.db.Exec("DELETE FROM reviews WHERE id = ?", reviewId)
 	if err != nil {
-		fmt.Println(errStr, err)
 		return false, err
 	}
 
@@ -82,43 +80,42 @@ func (rep *ReviewRepository) DeleteReview(reviewId int) (bool, error) {
 func (rep *ReviewRepository) GetReviewsProduct(productID int) ([]domain.Review, error) {
 	rows, err := rep.db.Query("select id, user_id, product_id, description, grade from reviews WHERE reviews.product_id =?", productID)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
+
 	defer rows.Close()
 
-	var reviews []domain.Review
+	var r []domain.Review
 
 	for rows.Next() {
 		review := domain.Review{}
 		err = rows.Scan(&review.ID, &review.UserID, &review.ProductID, &review.Description, &review.Grade)
 		if err != nil {
-			fmt.Println(err)
 			return nil, err
 		}
-		reviews = append(reviews, review)
+		r = append(r, review)
 	}
-	return reviews, nil
+
+	return r, nil
 }
 
 func (rep *ReviewRepository) GetReviews() ([]domain.Review, error) {
 	rows, err := rep.db.Query("select id, user_id, product_id, description, grade from reviews")
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
+
 	defer rows.Close()
 
-	var reviews []domain.Review
+	var r []domain.Review
 
 	for rows.Next() {
 		review := domain.Review{}
 		err = rows.Scan(&review.ID, &review.UserID, &review.ProductID, &review.Description, &review.Grade)
 		if err != nil {
-			fmt.Println(err)
 			return nil, err
 		}
-		reviews = append(reviews, review)
+		r = append(r, review)
 	}
-	return reviews, nil
+	return r, nil
 }
