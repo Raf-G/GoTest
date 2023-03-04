@@ -2,9 +2,9 @@ package main
 
 import (
 	"database/sql"
-	"example.com/m/v2/handlers"
-	"example.com/m/v2/repository"
-	"example.com/m/v2/service"
+	handlers2 "example.com/m/v2/internal/handlers"
+	repository2 "example.com/m/v2/internal/repository"
+	service2 "example.com/m/v2/internal/service"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -33,29 +33,29 @@ func NewApp() App {
 }
 
 func (app *App) setRouters() {
-	usersRepository := repository.NewUserRepository(app.db)
-	rolesRepository := repository.NewRoleRepository(app.db)
-	basketRepository := repository.NewBasketRepository(app.db)
-	productsRepository := repository.NewProductRepository(app.db)
-	reviewsRepository := repository.NewReviewRepository(app.db)
-	ordersRepository := repository.NewOrderRepository(app.db)
-	statusesRepository := repository.NewStatusRepository(app.db)
+	usersRepository := repository2.NewUserRepository(app.db)
+	rolesRepository := repository2.NewRoleRepository(app.db)
+	basketRepository := repository2.NewBasketRepository(app.db)
+	productsRepository := repository2.NewProductRepository(app.db)
+	reviewsRepository := repository2.NewReviewRepository(app.db)
+	ordersRepository := repository2.NewOrderRepository(app.db)
+	statusesRepository := repository2.NewStatusRepository(app.db)
 
-	usersService := service.NewUserService(usersRepository)
-	rolesService := service.NewRoleService(rolesRepository)
-	basketService := service.NewBasketService(basketRepository, productsRepository)
-	productsService := service.NewProductService(productsRepository)
-	reviewsService := service.NewReviewService(reviewsRepository)
-	ordersService := service.NewOrderService(ordersRepository, basketRepository, productsRepository)
-	satusesService := service.NewStatusService(statusesRepository)
+	usersService := service2.NewUserService(usersRepository)
+	rolesService := service2.NewRoleService(rolesRepository)
+	basketService := service2.NewBasketService(basketRepository, productsRepository)
+	productsService := service2.NewProductService(productsRepository)
+	reviewsService := service2.NewReviewService(reviewsRepository)
+	ordersService := service2.NewOrderService(ordersRepository, basketRepository, productsRepository)
+	satusesService := service2.NewStatusService(statusesRepository)
 
-	usersHandler := handlers.NewUserHandler(usersService)
-	rolesHandler := handlers.NewRoleHandler(rolesService)
-	basketHandler := handlers.NewBasketHandler(basketService)
-	productsHandler := handlers.NewProductHandler(productsService)
-	reviewsHandler := handlers.NewReviewHandler(reviewsService)
-	ordersHandler := handlers.NewOrderHandler(ordersService)
-	statusesHandler := handlers.NewStatusHandler(satusesService)
+	usersHandler := handlers2.NewUserHandler(usersService)
+	rolesHandler := handlers2.NewRoleHandler(rolesService)
+	basketHandler := handlers2.NewBasketHandler(basketService)
+	productsHandler := handlers2.NewProductHandler(productsService)
+	reviewsHandler := handlers2.NewReviewHandler(reviewsService)
+	ordersHandler := handlers2.NewOrderHandler(ordersService)
+	statusesHandler := handlers2.NewStatusHandler(satusesService)
 
 	// Users
 	app.router.HandleFunc("/api/users", usersHandler.Add).Methods("POST")
