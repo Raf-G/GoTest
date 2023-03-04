@@ -8,7 +8,7 @@ import (
 //go:generate mockgen -source=statuses.go -destination=mocks/statuses.go
 
 type StatusesStorage interface {
-	GetStatus(int) (domain.Status, error)
+	GetStatus(int) (*domain.Status, error)
 	GetStatuses() ([]domain.Status, error)
 }
 
@@ -20,17 +20,20 @@ func NewStatusRepository(db *sql.DB) *StatusRepository {
 	return &StatusRepository{db}
 }
 
-func (res *StatusRepository) GetStatus(statusID int) (domain.Status, error) {
+func (res *StatusRepository) GetStatus(statusID int) (*domain.Status, error) {
 	row := res.db.QueryRow("SELECT * FROM statuses WHERE id = ?", statusID)
 
 	status := domain.Status{}
 
 	err := row.Scan(&status.ID, &status.Name)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
 	if err != nil {
-		return domain.Status{}, err
+		return nil, err
 	}
 
-	return status, nil
+	return &status, nil
 }
 
 func (res *StatusRepository) GetStatuses() ([]domain.Status, error) {

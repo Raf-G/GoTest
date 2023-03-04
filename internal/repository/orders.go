@@ -11,7 +11,7 @@ import (
 
 type OrdersStorage interface {
 	AddOrder(int) (int, error)
-	GetOrder(int) (domain.Order, error)
+	GetOrder(int) (*domain.Order, error)
 	DeleteOrder(int) (bool, error)
 	GetOrders() ([]domain.Order, error)
 	AddProductOrder(domain.ProductOrder) (int, error)
@@ -41,17 +41,20 @@ func (res *OrderRepository) AddOrder(userID int) (int, error) {
 	return int(id), nil
 }
 
-func (res *OrderRepository) GetOrder(orderID int) (domain.Order, error) {
+func (res *OrderRepository) GetOrder(orderID int) (*domain.Order, error) {
 	row := res.db.QueryRow("SELECT * FROM orders WHERE id = ?", orderID)
 
 	order := domain.Order{}
 
 	err := row.Scan(&order.ID, &order.UserID, &order.StatusID)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
 	if err != nil {
-		return domain.Order{}, err
+		return nil, err
 	}
 
-	return order, nil
+	return &order, nil
 }
 
 func (res *OrderRepository) DeleteOrder(orderID int) (bool, error) {

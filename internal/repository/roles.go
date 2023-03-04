@@ -8,7 +8,7 @@ import (
 //go:generate mockgen -source=roles.go -destination=mocks/roles.go
 
 type RolesStorage interface {
-	GetRole(int) (domain.Role, error)
+	GetRole(int) (*domain.Role, error)
 	GetRoles() ([]domain.Role, error)
 }
 
@@ -20,17 +20,20 @@ func NewRoleRepository(db *sql.DB) *RoleRepository {
 	return &RoleRepository{db}
 }
 
-func (res *RoleRepository) GetRole(id int) (domain.Role, error) {
+func (res *RoleRepository) GetRole(id int) (*domain.Role, error) {
 	row := res.db.QueryRow("SELECT * FROM roles WHERE id = ?", id)
 
 	role := domain.Role{}
 
 	err := row.Scan(&role.ID, &role.Name)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
 	if err != nil {
-		return domain.Role{}, err
+		return nil, err
 	}
 
-	return role, nil
+	return &role, nil
 }
 
 func (rep *RoleRepository) GetRoles() ([]domain.Role, error) {

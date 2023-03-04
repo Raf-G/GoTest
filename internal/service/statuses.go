@@ -27,8 +27,11 @@ func (res *StatusService) GetStatus(statusID int) (domain.Status, error) {
 	if err != nil {
 		return domain.Status{}, errors.Wrap(err, errStr)
 	}
+	if status == nil {
+		return domain.Status{}, errors.Wrap(domain.ErrStatusNotFound, errStr)
+	}
 
-	return status, err
+	return *status, err
 }
 
 func (res *StatusService) GetStatuses() ([]domain.Status, error) {

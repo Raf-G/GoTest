@@ -5,9 +5,9 @@
 package mock_repository
 
 import (
-	"example.com/m/v2/internal/domain"
 	reflect "reflect"
 
+	domain "example.com/m/v2/internal/domain"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -35,10 +35,10 @@ func (m *MockStatusesStorage) EXPECT() *MockStatusesStorageMockRecorder {
 }
 
 // GetStatus mocks base method.
-func (m *MockStatusesStorage) GetStatus(arg0 int) (domain.Status, error) {
+func (m *MockStatusesStorage) GetStatus(arg0 int) (*domain.Status, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetStatus", arg0)
-	ret0, _ := ret[0].(domain.Status)
+	ret0, _ := ret[0].(*domain.Status)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

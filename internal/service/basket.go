@@ -1,33 +1,33 @@
 package service
 
 import (
-	domain2 "example.com/m/v2/internal/domain"
-	repository2 "example.com/m/v2/internal/repository"
+	domain "example.com/m/v2/internal/domain"
+	repository "example.com/m/v2/internal/repository"
 	"example.com/m/v2/internal/validation"
 	"fmt"
 	"github.com/pkg/errors"
 )
 
 type BasketsService interface {
-	AddProductToBasket(domain2.BasketProduct) (domain2.BasketProduct, error)
-	DecreaseQuantityProductToBasket(domain2.BasketProduct) (domain2.BasketProduct, error)
+	AddProductToBasket(domain.BasketProduct) (domain.BasketProduct, error)
+	DecreaseQuantityProductToBasket(domain.BasketProduct) (domain.BasketProduct, error)
 	DeleteProductToBasket(int) error
-	GetBasket(int) (domain2.Basket, error)
+	GetBasket(int) (domain.Basket, error)
 }
 
 type BasketService struct {
-	store        repository2.BasketsStorage
-	storeProduct repository2.ProductsStorage
+	store        repository.BasketsStorage
+	storeProduct repository.ProductsStorage
 }
 
-func NewBasketService(storage repository2.BasketsStorage, storageProduct repository2.ProductsStorage) *BasketService {
+func NewBasketService(storage repository.BasketsStorage, storageProduct repository.ProductsStorage) *BasketService {
 	return &BasketService{storage, storageProduct}
 }
 
-func (cs *BasketService) GetBasket(userID int) (domain2.Basket, error) {
+func (cs *BasketService) GetBasket(userID int) (domain.Basket, error) {
 	errStr := "basket not fetched"
 
-	var b domain2.Basket
+	var b domain.Basket
 
 	c, err := cs.store.GetBasket(userID)
 	if err != nil {
@@ -48,7 +48,7 @@ func (cs *BasketService) GetBasket(userID int) (domain2.Basket, error) {
 	return b, nil
 }
 
-func (res *BasketService) AddProductToBasket(u domain2.BasketProduct) (domain2.BasketProduct, error) {
+func (res *BasketService) AddProductToBasket(u domain.BasketProduct) (domain.BasketProduct, error) {
 	errStr := "product to basket not added"
 
 	err := validation.BasketProductValidation(u)
@@ -62,7 +62,7 @@ func (res *BasketService) AddProductToBasket(u domain2.BasketProduct) (domain2.B
 
 		newProduct, errEdit := res.store.EditBasketProduct(*existingProduct)
 		if errEdit != nil {
-			return u, errors.Wrap(domain2.ErrBasketProductNotFound, errStr)
+			return u, errors.Wrap(domain.ErrBasketProductNotFound, errStr)
 		}
 
 		return newProduct, nil
@@ -85,12 +85,11 @@ func (res *BasketService) AddProductToBasket(u domain2.BasketProduct) (domain2.B
 	return productDB, nil
 }
 
-func (res *BasketService) DecreaseQuantityProductToBasket(p domain2.BasketProduct) (domain2.BasketProduct, error) {
+func (res *BasketService) DecreaseQuantityProductToBasket(p domain.BasketProduct) (domain.BasketProduct, error) {
 	errStr := "product to basket not edit"
 	errProduct := "product to basket not fetched"
 
 	existingProduct, err := res.store.GetBasketProduct(p.BasketID, p.ProductID)
-
 	if err == nil && existingProduct != nil {
 		if existingProduct.Count <= 1 {
 			isDeleted, errDel := res.store.DeleteBasketProduct(existingProduct.ID)
@@ -99,7 +98,7 @@ func (res *BasketService) DecreaseQuantityProductToBasket(p domain2.BasketProduc
 			}
 
 			if !isDeleted {
-				return *existingProduct, errors.Wrap(domain2.ErrBasketNotDeleted, errStr)
+				return *existingProduct, errors.Wrap(domain.ErrBasketNotDeleted, errStr)
 			}
 
 			existingProduct.Count -= 1
@@ -111,7 +110,7 @@ func (res *BasketService) DecreaseQuantityProductToBasket(p domain2.BasketProduc
 
 		_, errEdit := res.store.EditBasketProduct(*existingProduct)
 		if errEdit != nil {
-			return p, errors.Wrap(domain2.ErrBasketProductNotFound, errStr)
+			return p, errors.Wrap(domain.ErrBasketProductNotFound, errStr)
 		}
 
 		productInfo, errGet := res.storeProduct.GetProduct(p.ProductID)
@@ -137,7 +136,7 @@ func (res *BasketService) DeleteProductToBasket(basketProductID int) error {
 	}
 
 	if !isDeleted {
-		return errors.Wrap(domain2.ErrBasketProductNotFound, errStr)
+		return errors.Wrap(domain.ErrBasketProductNotFound, errStr)
 	}
 
 	return nil

@@ -5,9 +5,9 @@
 package mock_repository
 
 import (
-	"example.com/m/v2/internal/domain"
 	reflect "reflect"
 
+	domain "example.com/m/v2/internal/domain"
 	gomock "github.com/golang/mock/gomock"
 )
 
@@ -95,10 +95,10 @@ func (mr *MockOrdersStorageMockRecorder) DeleteProductsOrder(arg0 interface{}) *
 }
 
 // GetOrder mocks base method.
-func (m *MockOrdersStorage) GetOrder(arg0 int) (domain.Order, error) {
+func (m *MockOrdersStorage) GetOrder(arg0 int) (*domain.Order, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetOrder", arg0)
-	ret0, _ := ret[0].(domain.Order)
+	ret0, _ := ret[0].(*domain.Order)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

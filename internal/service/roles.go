@@ -27,8 +27,11 @@ func (res *RoleService) GetRole(id int) (domain.Role, error) {
 	if err != nil {
 		return domain.Role{}, errors.Wrap(err, errStr)
 	}
+	if role == nil {
+		return domain.Role{}, errors.Wrap(domain.ErrRoleNotFound, errStr)
+	}
 
-	return role, err
+	return *role, err
 }
 
 func (cs *RoleService) GetRoleAll() ([]domain.Role, error) {

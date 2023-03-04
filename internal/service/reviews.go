@@ -1,19 +1,19 @@
 package service
 
 import (
-	domain2 "example.com/m/v2/internal/domain"
+	domain "example.com/m/v2/internal/domain"
 	"example.com/m/v2/internal/repository"
 	"fmt"
 	"github.com/pkg/errors"
 )
 
 type ReviewsService interface {
-	AddReview(domain2.Review) (domain2.Review, error)
-	EditReview(domain2.Review) (domain2.Review, error)
-	GetReview(int) (domain2.Review, error)
+	AddReview(domain.Review) (domain.Review, error)
+	EditReview(domain.Review) (domain.Review, error)
+	GetReview(int) (domain.Review, error)
 	DeleteReview(int) error
-	GetAllReviewsProduct(int) ([]domain2.Review, error)
-	GetReviews() ([]domain2.Review, error)
+	GetAllReviewsProduct(int) ([]domain.Review, error)
+	GetReviews() ([]domain.Review, error)
 }
 
 type ReviewService struct {
@@ -24,7 +24,7 @@ func NewReviewService(storage repository.ReviewsStorage) *ReviewService {
 	return &ReviewService{storage}
 }
 
-func (res *ReviewService) AddReview(r domain2.Review) (domain2.Review, error) {
+func (res *ReviewService) AddReview(r domain.Review) (domain.Review, error) {
 	errStr := "review not added"
 
 	reviewDB, err := res.store.AddReview(r)
@@ -33,36 +33,42 @@ func (res *ReviewService) AddReview(r domain2.Review) (domain2.Review, error) {
 	}
 
 	if reviewDB == nil {
-		return r, errors.Wrap(domain2.ErrReviewNotFound, errStr)
+		return r, errors.Wrap(domain.ErrReviewNotFound, errStr)
 	}
 
 	return *reviewDB, nil
 }
 
-func (res *ReviewService) EditReview(r domain2.Review) (domain2.Review, error) {
+func (res *ReviewService) EditReview(r domain.Review) (domain.Review, error) {
 	errStr := "review not edited"
 
 	err := res.store.EditReview(r)
 	if err != nil {
-		return domain2.Review{}, errors.Wrap(domain2.ErrReviewNotEdited, errStr)
+		return domain.Review{}, errors.Wrap(domain.ErrReviewNotEdited, errStr)
 	}
 
 	newReview, err := res.store.GetReview(r.ID)
 	if err != nil {
-		return domain2.Review{}, errors.Wrap(err, errStr)
+		return domain.Review{}, errors.Wrap(err, errStr)
+	}
+	if newReview == nil {
+		return domain.Review{}, errors.Wrap(domain.ErrReviewNotFound, errStr)
 	}
 
-	return newReview, nil
+	return *newReview, nil
 }
 
-func (res *ReviewService) GetReview(id int) (domain2.Review, error) {
+func (res *ReviewService) GetReview(id int) (domain.Review, error) {
 	errStr := "review not fetched"
 	review, err := res.store.GetReview(id)
 	if err != nil {
-		return domain2.Review{}, errors.Wrap(err, errStr)
+		return domain.Review{}, errors.Wrap(err, errStr)
+	}
+	if review == nil {
+		return domain.Review{}, errors.Wrap(domain.ErrReviewNotFound, errStr)
 	}
 
-	return review, nil
+	return *review, nil
 }
 
 func (res *ReviewService) DeleteReview(reviewID int) error {
@@ -74,13 +80,13 @@ func (res *ReviewService) DeleteReview(reviewID int) error {
 	}
 
 	if !isDeleted {
-		return errors.Wrap(domain2.ErrUserNotFound, errStr)
+		return errors.Wrap(domain.ErrUserNotFound, errStr)
 	}
 
 	return nil
 }
 
-func (res *ReviewService) GetAllReviewsProduct(productID int) ([]domain2.Review, error) {
+func (res *ReviewService) GetAllReviewsProduct(productID int) ([]domain.Review, error) {
 	errStr := "reviews not fetched"
 
 	c, err := res.store.GetReviewsProduct(productID)
@@ -91,7 +97,7 @@ func (res *ReviewService) GetAllReviewsProduct(productID int) ([]domain2.Review,
 	return c, nil
 }
 
-func (res *ReviewService) GetReviews() ([]domain2.Review, error) {
+func (res *ReviewService) GetReviews() ([]domain.Review, error) {
 	errStr := "reviews not fetched"
 
 	c, err := res.store.GetReviews()

@@ -74,6 +74,9 @@ func (res *BasketRepository) GetBasketProduct(basketID int, productID int) (*dom
 	product := domain.BasketProduct{}
 
 	err := row.Scan(&product.ID, &product.BasketID, &product.ProductID, &product.Count)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
 	if err != nil {
 		return nil, err
 	}

@@ -1,7 +1,7 @@
 package service
 
 import (
-	domain2 "example.com/m/v2/internal/domain"
+	domain "example.com/m/v2/internal/domain"
 	"example.com/m/v2/internal/repository"
 	"example.com/m/v2/internal/validation"
 	"fmt"
@@ -9,10 +9,10 @@ import (
 )
 
 type UsersService interface {
-	Add(domain2.User) (domain2.User, error)
-	GetUser(int) (domain2.User, error)
-	GetAll() ([]domain2.User, error)
-	Edit(domain2.User) (domain2.User, error)
+	Add(domain.User) (domain.User, error)
+	GetUser(int) (domain.User, error)
+	GetAll() ([]domain.User, error)
+	Edit(domain.User) (domain.User, error)
 	Delete(int) error
 }
 
@@ -24,7 +24,7 @@ func NewUserService(storage repository.UsersStorage) *UserService {
 	return &UserService{storage}
 }
 
-func (res *UserService) Add(u domain2.User) (domain2.User, error) {
+func (res *UserService) Add(u domain.User) (domain.User, error) {
 	errStr := "user not added"
 
 	err := validation.UserValidation(u)
@@ -40,22 +40,21 @@ func (res *UserService) Add(u domain2.User) (domain2.User, error) {
 	return userDB, nil
 }
 
-func (res *UserService) GetUser(id int) (domain2.User, error) {
+func (res *UserService) GetUser(id int) (domain.User, error) {
 	errStr := fmt.Sprintf("user (userID %d) not fetched", id)
 
 	user, err := res.store.GetUser(id)
 	if err != nil {
-		return domain2.User{}, errors.Wrap(err, errStr)
+		return domain.User{}, errors.Wrap(err, errStr)
 	}
-
 	if user == nil {
-		return domain2.User{}, errors.Wrap(domain2.ErrUserNotFound, errStr)
+		return domain.User{}, errors.Wrap(domain.ErrUserNotFound, errStr)
 	}
 
 	return *user, err
 }
 
-func (res *UserService) GetAll() ([]domain2.User, error) {
+func (res *UserService) GetAll() ([]domain.User, error) {
 	errStr := "users not fetched"
 	c, err := res.store.GetUsers()
 	if err != nil {
@@ -65,7 +64,7 @@ func (res *UserService) GetAll() ([]domain2.User, error) {
 	return c, nil
 }
 
-func (res *UserService) Edit(u domain2.User) (domain2.User, error) {
+func (res *UserService) Edit(u domain.User) (domain.User, error) {
 	errStr := "user not edit"
 
 	err := validation.UserValidation(u)
@@ -75,7 +74,7 @@ func (res *UserService) Edit(u domain2.User) (domain2.User, error) {
 
 	newUser, err := res.store.Edit(u)
 	if err != nil {
-		return domain2.User{}, errors.Wrap(domain2.ErrUserNotEdited, errStr)
+		return domain.User{}, errors.Wrap(domain.ErrUserNotEdited, errStr)
 	}
 
 	return newUser, nil
@@ -90,7 +89,7 @@ func (res *UserService) Delete(userID int) error {
 	}
 
 	if !isDeleted {
-		return errors.Wrap(domain2.ErrUserNotFound, errStr)
+		return errors.Wrap(domain.ErrUserNotFound, errStr)
 	}
 
 	return nil

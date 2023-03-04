@@ -11,7 +11,7 @@ import (
 type ReviewsStorage interface {
 	AddReview(domain.Review) (*domain.Review, error)
 	EditReview(domain.Review) error
-	GetReview(int) (domain.Review, error)
+	GetReview(int) (*domain.Review, error)
 	DeleteReview(int) (bool, error)
 	GetReviewsProduct(int) ([]domain.Review, error)
 	GetReviews() ([]domain.Review, error)
@@ -55,17 +55,20 @@ func (rep *ReviewRepository) EditReview(r domain.Review) error {
 
 	return nil
 }
-func (rep *ReviewRepository) GetReview(id int) (domain.Review, error) {
+func (rep *ReviewRepository) GetReview(id int) (*domain.Review, error) {
 	row := rep.db.QueryRow("select id, user_id, product_id, description, grade from reviews WHERE reviews.id =?", id)
 
 	r := domain.Review{}
 
 	err := row.Scan(&r.ID, &r.UserID, &r.ProductID, &r.Description, &r.Grade)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
 	if err != nil {
-		return domain.Review{}, err
+		return nil, err
 	}
 
-	return r, nil
+	return &r, nil
 }
 
 func (rep *ReviewRepository) DeleteReview(reviewId int) (bool, error) {

@@ -1,7 +1,7 @@
 package service
 
 import (
-	domain2 "example.com/m/v2/internal/domain"
+	domain "example.com/m/v2/internal/domain"
 	"example.com/m/v2/internal/repository/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -12,18 +12,18 @@ func TestGetBasket(t *testing.T) {
 	testTable := []struct {
 		name            string
 		idUser          int
-		returnResp      domain2.Basket
+		returnResp      domain.Basket
 		returnError     error
-		returnRespRepo  *domain2.Basket
+		returnRespRepo  *domain.Basket
 		returnErrorRepo error
 		isCheckError    bool
 	}{
 		{
 			name:   "ok",
 			idUser: 1,
-			returnRespRepo: &domain2.Basket{
+			returnRespRepo: &domain.Basket{
 				ID: 1,
-				Products: []domain2.BasketProduct{
+				Products: []domain.BasketProduct{
 					{
 						ID:         1,
 						BasketID:   1,
@@ -33,10 +33,10 @@ func TestGetBasket(t *testing.T) {
 					},
 				},
 			},
-			returnResp: domain2.Basket{
+			returnResp: domain.Basket{
 				ID:     1,
 				UserID: 1,
-				Products: []domain2.BasketProduct{
+				Products: []domain.BasketProduct{
 					{
 						ID:         1,
 						BasketID:   1,
@@ -55,7 +55,7 @@ func TestGetBasket(t *testing.T) {
 			name:            "error",
 			idUser:          1,
 			returnRespRepo:  nil,
-			returnResp:      domain2.Basket{},
+			returnResp:      domain.Basket{},
 			returnError:     testErr,
 			returnErrorRepo: testErr,
 			isCheckError:    true,
@@ -90,37 +90,37 @@ func TestGetBasket(t *testing.T) {
 func TestAddProductToBasket(t *testing.T) {
 	testTable := []struct {
 		name         string
-		inputProduct domain2.BasketProduct
-		returnResp   domain2.BasketProduct
+		inputProduct domain.BasketProduct
+		returnResp   domain.BasketProduct
 		returnError  error
 
 		isCallRepositoryMethodGetBasketProduct bool
-		returnRespRepoGetBasketProduct         *domain2.BasketProduct
+		returnRespRepoGetBasketProduct         *domain.BasketProduct
 		returnErrorRepoGetBasketProduct        error
 
 		isCallRepositoryMethodEditBasketProduct bool
-		firstArgumentEditBasketProduct          domain2.BasketProduct
-		returnRespRepoEditBasketProduct         domain2.BasketProduct
+		firstArgumentEditBasketProduct          domain.BasketProduct
+		returnRespRepoEditBasketProduct         domain.BasketProduct
 		returnErrorRepoEditBasketProduct        error
 
 		isCallRepositoryMethodAddBasketProduct bool
-		returnRespRepoAddBasketProduct         domain2.BasketProduct
+		returnRespRepoAddBasketProduct         domain.BasketProduct
 		returnErrorRepoAddBasketProduct        error
 
 		isCallRepositoryMethodGetProduct bool
-		returnRespRepoGetProduct         *domain2.Product
+		returnRespRepoGetProduct         *domain.Product
 		returnErrorRepoGetProduct        error
 
 		isCheckError bool
 	}{
 		{
 			name: "Add product count",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnResp: domain2.BasketProduct{
+			returnResp: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -129,7 +129,7 @@ func TestAddProductToBasket(t *testing.T) {
 			returnError: nil,
 
 			isCallRepositoryMethodGetBasketProduct: true,
-			returnRespRepoGetBasketProduct: &domain2.BasketProduct{
+			returnRespRepoGetBasketProduct: &domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -138,13 +138,13 @@ func TestAddProductToBasket(t *testing.T) {
 			returnErrorRepoGetBasketProduct: nil,
 
 			isCallRepositoryMethodEditBasketProduct: true,
-			firstArgumentEditBasketProduct: domain2.BasketProduct{
+			firstArgumentEditBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     3,
 			},
-			returnRespRepoEditBasketProduct: domain2.BasketProduct{
+			returnRespRepoEditBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -153,7 +153,7 @@ func TestAddProductToBasket(t *testing.T) {
 			returnErrorRepoEditBasketProduct: nil,
 
 			isCallRepositoryMethodAddBasketProduct: false,
-			returnRespRepoAddBasketProduct: domain2.BasketProduct{
+			returnRespRepoAddBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -162,7 +162,7 @@ func TestAddProductToBasket(t *testing.T) {
 			returnErrorRepoAddBasketProduct: nil,
 
 			isCallRepositoryMethodGetProduct: false,
-			returnRespRepoGetProduct: &domain2.Product{
+			returnRespRepoGetProduct: &domain.Product{
 				ID:          1,
 				Name:        "car",
 				Description: "car is a cool",
@@ -174,12 +174,12 @@ func TestAddProductToBasket(t *testing.T) {
 		},
 		{
 			name: "Add product",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnResp: domain2.BasketProduct{
+			returnResp: domain.BasketProduct{
 				ID:         1,
 				BasketID:   1,
 				ProductID:  1,
@@ -193,12 +193,12 @@ func TestAddProductToBasket(t *testing.T) {
 			returnErrorRepoGetBasketProduct:        testErr,
 
 			isCallRepositoryMethodEditBasketProduct: false,
-			firstArgumentEditBasketProduct:          domain2.BasketProduct{},
-			returnRespRepoEditBasketProduct:         domain2.BasketProduct{},
+			firstArgumentEditBasketProduct:          domain.BasketProduct{},
+			returnRespRepoEditBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct:        nil,
 
 			isCallRepositoryMethodAddBasketProduct: true,
-			returnRespRepoAddBasketProduct: domain2.BasketProduct{
+			returnRespRepoAddBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -207,7 +207,7 @@ func TestAddProductToBasket(t *testing.T) {
 			returnErrorRepoAddBasketProduct: nil,
 
 			isCallRepositoryMethodGetProduct: true,
-			returnRespRepoGetProduct: &domain2.Product{
+			returnRespRepoGetProduct: &domain.Product{
 				ID:          1,
 				Name:        "car",
 				Description: "car is a cool",
@@ -219,20 +219,20 @@ func TestAddProductToBasket(t *testing.T) {
 		},
 		{
 			name: "Error method EditBasketProduct",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnResp: domain2.BasketProduct{
+			returnResp: domain.BasketProduct{
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnError: domain2.ErrBasketProductNotFound,
+			returnError: domain.ErrBasketProductNotFound,
 
 			isCallRepositoryMethodGetBasketProduct: true,
-			returnRespRepoGetBasketProduct: &domain2.BasketProduct{
+			returnRespRepoGetBasketProduct: &domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -241,17 +241,17 @@ func TestAddProductToBasket(t *testing.T) {
 			returnErrorRepoGetBasketProduct: nil,
 
 			isCallRepositoryMethodEditBasketProduct: true,
-			firstArgumentEditBasketProduct: domain2.BasketProduct{
+			firstArgumentEditBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     3,
 			},
-			returnRespRepoEditBasketProduct:  domain2.BasketProduct{},
+			returnRespRepoEditBasketProduct:  domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct: testErr,
 
 			isCallRepositoryMethodAddBasketProduct: false,
-			returnRespRepoAddBasketProduct:         domain2.BasketProduct{},
+			returnRespRepoAddBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoAddBasketProduct:        nil,
 
 			isCallRepositoryMethodGetProduct: false,
@@ -262,12 +262,12 @@ func TestAddProductToBasket(t *testing.T) {
 		},
 		{
 			name: "Error method AddBasketProduct",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnResp:  domain2.BasketProduct{},
+			returnResp:  domain.BasketProduct{},
 			returnError: testErr,
 
 			isCallRepositoryMethodGetBasketProduct: true,
@@ -275,12 +275,12 @@ func TestAddProductToBasket(t *testing.T) {
 			returnErrorRepoGetBasketProduct:        testErr,
 
 			isCallRepositoryMethodEditBasketProduct: false,
-			firstArgumentEditBasketProduct:          domain2.BasketProduct{},
-			returnRespRepoEditBasketProduct:         domain2.BasketProduct{},
+			firstArgumentEditBasketProduct:          domain.BasketProduct{},
+			returnRespRepoEditBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct:        nil,
 
 			isCallRepositoryMethodAddBasketProduct: true,
-			returnRespRepoAddBasketProduct:         domain2.BasketProduct{},
+			returnRespRepoAddBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoAddBasketProduct:        testErr,
 
 			isCallRepositoryMethodGetProduct: false,
@@ -291,12 +291,12 @@ func TestAddProductToBasket(t *testing.T) {
 		},
 		{
 			name: "Error method GetProduct",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnResp:  domain2.BasketProduct{},
+			returnResp:  domain.BasketProduct{},
 			returnError: testErr,
 
 			isCallRepositoryMethodGetBasketProduct: true,
@@ -304,12 +304,12 @@ func TestAddProductToBasket(t *testing.T) {
 			returnErrorRepoGetBasketProduct:        testErr,
 
 			isCallRepositoryMethodEditBasketProduct: false,
-			firstArgumentEditBasketProduct:          domain2.BasketProduct{},
-			returnRespRepoEditBasketProduct:         domain2.BasketProduct{},
+			firstArgumentEditBasketProduct:          domain.BasketProduct{},
+			returnRespRepoEditBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct:        nil,
 
 			isCallRepositoryMethodAddBasketProduct: true,
-			returnRespRepoAddBasketProduct: domain2.BasketProduct{
+			returnRespRepoAddBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -325,24 +325,24 @@ func TestAddProductToBasket(t *testing.T) {
 		},
 		{
 			name: "No BasketID (validation)",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				ProductID: 1,
 				Count:     1,
 			},
-			returnResp:  domain2.BasketProduct{},
-			returnError: domain2.ErrBasketProductNoBasketID,
+			returnResp:  domain.BasketProduct{},
+			returnError: domain.ErrBasketProductNoBasketID,
 
 			isCallRepositoryMethodGetBasketProduct: false,
 			returnRespRepoGetBasketProduct:         nil,
 			returnErrorRepoGetBasketProduct:        nil,
 
 			isCallRepositoryMethodEditBasketProduct: false,
-			firstArgumentEditBasketProduct:          domain2.BasketProduct{},
-			returnRespRepoEditBasketProduct:         domain2.BasketProduct{},
+			firstArgumentEditBasketProduct:          domain.BasketProduct{},
+			returnRespRepoEditBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct:        nil,
 
 			isCallRepositoryMethodAddBasketProduct: false,
-			returnRespRepoAddBasketProduct:         domain2.BasketProduct{},
+			returnRespRepoAddBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoAddBasketProduct:        nil,
 
 			isCallRepositoryMethodGetProduct: false,
@@ -353,24 +353,24 @@ func TestAddProductToBasket(t *testing.T) {
 		},
 		{
 			name: "No ProductID (validation)",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				BasketID: 1,
 				Count:    1,
 			},
-			returnResp:  domain2.BasketProduct{},
-			returnError: domain2.ErrBasketProductNoProductID,
+			returnResp:  domain.BasketProduct{},
+			returnError: domain.ErrBasketProductNoProductID,
 
 			isCallRepositoryMethodGetBasketProduct: false,
 			returnRespRepoGetBasketProduct:         nil,
 			returnErrorRepoGetBasketProduct:        nil,
 
 			isCallRepositoryMethodEditBasketProduct: false,
-			firstArgumentEditBasketProduct:          domain2.BasketProduct{},
-			returnRespRepoEditBasketProduct:         domain2.BasketProduct{},
+			firstArgumentEditBasketProduct:          domain.BasketProduct{},
+			returnRespRepoEditBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct:        nil,
 
 			isCallRepositoryMethodAddBasketProduct: false,
-			returnRespRepoAddBasketProduct:         domain2.BasketProduct{},
+			returnRespRepoAddBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoAddBasketProduct:        nil,
 
 			isCallRepositoryMethodGetProduct: false,
@@ -381,24 +381,24 @@ func TestAddProductToBasket(t *testing.T) {
 		},
 		{
 			name: "No Count (validation)",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				ProductID: 1,
 				BasketID:  1,
 			},
-			returnResp:  domain2.BasketProduct{},
-			returnError: domain2.ErrBasketProductNoCount,
+			returnResp:  domain.BasketProduct{},
+			returnError: domain.ErrBasketProductNoCount,
 
 			isCallRepositoryMethodGetBasketProduct: false,
 			returnRespRepoGetBasketProduct:         nil,
 			returnErrorRepoGetBasketProduct:        nil,
 
 			isCallRepositoryMethodEditBasketProduct: false,
-			firstArgumentEditBasketProduct:          domain2.BasketProduct{},
-			returnRespRepoEditBasketProduct:         domain2.BasketProduct{},
+			firstArgumentEditBasketProduct:          domain.BasketProduct{},
+			returnRespRepoEditBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct:        nil,
 
 			isCallRepositoryMethodAddBasketProduct: false,
-			returnRespRepoAddBasketProduct:         domain2.BasketProduct{},
+			returnRespRepoAddBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoAddBasketProduct:        nil,
 
 			isCallRepositoryMethodGetProduct: false,
@@ -460,12 +460,12 @@ func TestAddProductToBasket(t *testing.T) {
 func TestDecreaseQuantityProductToBasket(t *testing.T) {
 	testTable := []struct {
 		name         string
-		inputProduct domain2.BasketProduct
-		returnResp   domain2.BasketProduct
+		inputProduct domain.BasketProduct
+		returnResp   domain.BasketProduct
 		returnError  error
 
 		isCallRepositoryMethodGetBasketProduct bool
-		returnRespRepoGetBasketProduct         *domain2.BasketProduct
+		returnRespRepoGetBasketProduct         *domain.BasketProduct
 		returnErrorRepoGetBasketProduct        error
 
 		isCallRepositoryMethodDeleteBasketProduct bool
@@ -473,24 +473,24 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 		returnErrorRepoDeleteBasketProduct        error
 
 		isCallRepositoryMethodEditBasketProduct bool
-		firstArgumentEditBasketProduct          domain2.BasketProduct
-		returnRespRepoEditBasketProduct         domain2.BasketProduct
+		firstArgumentEditBasketProduct          domain.BasketProduct
+		returnRespRepoEditBasketProduct         domain.BasketProduct
 		returnErrorRepoEditBasketProduct        error
 
 		isCallRepositoryMethodGetProduct bool
-		returnRespRepoGetProduct         *domain2.Product
+		returnRespRepoGetProduct         *domain.Product
 		returnErrorRepoGetProduct        error
 
 		isCheckError bool
 	}{
 		{
 			name: "Delete product count",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnResp: domain2.BasketProduct{
+			returnResp: domain.BasketProduct{
 				ID:         1,
 				BasketID:   1,
 				ProductID:  1,
@@ -500,7 +500,7 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnError: nil,
 
 			isCallRepositoryMethodGetBasketProduct: true,
-			returnRespRepoGetBasketProduct: &domain2.BasketProduct{
+			returnRespRepoGetBasketProduct: &domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -513,8 +513,8 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnErrorRepoDeleteBasketProduct:        nil,
 
 			isCallRepositoryMethodEditBasketProduct: false,
-			firstArgumentEditBasketProduct:          domain2.BasketProduct{},
-			returnRespRepoEditBasketProduct:         domain2.BasketProduct{},
+			firstArgumentEditBasketProduct:          domain.BasketProduct{},
+			returnRespRepoEditBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct:        nil,
 
 			isCallRepositoryMethodGetProduct: false,
@@ -525,12 +525,12 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 		},
 		{
 			name: "Decrease product count",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				BasketID:  1,
 				ProductID: 1,
 				Count:     2,
 			},
-			returnResp: domain2.BasketProduct{
+			returnResp: domain.BasketProduct{
 				ID:         1,
 				BasketID:   1,
 				ProductID:  1,
@@ -540,7 +540,7 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnError: nil,
 
 			isCallRepositoryMethodGetBasketProduct: true,
-			returnRespRepoGetBasketProduct: &domain2.BasketProduct{
+			returnRespRepoGetBasketProduct: &domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -553,13 +553,13 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnErrorRepoDeleteBasketProduct:        nil,
 
 			isCallRepositoryMethodEditBasketProduct: true,
-			firstArgumentEditBasketProduct: domain2.BasketProduct{
+			firstArgumentEditBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnRespRepoEditBasketProduct: domain2.BasketProduct{
+			returnRespRepoEditBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -568,7 +568,7 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnErrorRepoEditBasketProduct: nil,
 
 			isCallRepositoryMethodGetProduct: true,
-			returnRespRepoGetProduct: &domain2.Product{
+			returnRespRepoGetProduct: &domain.Product{
 				ID:          1,
 				Name:        "car",
 				Description: "car is a cool",
@@ -580,13 +580,13 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 		},
 		{
 			name: "Error method GetBasketProduct",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnResp: domain2.BasketProduct{
+			returnResp: domain.BasketProduct{
 				ID:         1,
 				BasketID:   1,
 				ProductID:  1,
@@ -604,8 +604,8 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnErrorRepoDeleteBasketProduct:        nil,
 
 			isCallRepositoryMethodEditBasketProduct: false,
-			firstArgumentEditBasketProduct:          domain2.BasketProduct{},
-			returnRespRepoEditBasketProduct:         domain2.BasketProduct{},
+			firstArgumentEditBasketProduct:          domain.BasketProduct{},
+			returnRespRepoEditBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct:        nil,
 
 			isCallRepositoryMethodGetProduct: false,
@@ -616,13 +616,13 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 		},
 		{
 			name: "Error method DeleteBasketProduct",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnResp: domain2.BasketProduct{
+			returnResp: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -631,7 +631,7 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnError: testErr,
 
 			isCallRepositoryMethodGetBasketProduct: true,
-			returnRespRepoGetBasketProduct: &domain2.BasketProduct{
+			returnRespRepoGetBasketProduct: &domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -644,8 +644,8 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnErrorRepoDeleteBasketProduct:        testErr,
 
 			isCallRepositoryMethodEditBasketProduct: false,
-			firstArgumentEditBasketProduct:          domain2.BasketProduct{},
-			returnRespRepoEditBasketProduct:         domain2.BasketProduct{},
+			firstArgumentEditBasketProduct:          domain.BasketProduct{},
+			returnRespRepoEditBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct:        nil,
 
 			isCallRepositoryMethodGetProduct: false,
@@ -656,22 +656,22 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 		},
 		{
 			name: "isDeleted = false, method DeleteBasketProduct",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnResp: domain2.BasketProduct{
+			returnResp: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnError: domain2.ErrBasketNotDeleted,
+			returnError: domain.ErrBasketNotDeleted,
 
 			isCallRepositoryMethodGetBasketProduct: true,
-			returnRespRepoGetBasketProduct: &domain2.BasketProduct{
+			returnRespRepoGetBasketProduct: &domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -684,8 +684,8 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnErrorRepoDeleteBasketProduct:        nil,
 
 			isCallRepositoryMethodEditBasketProduct: false,
-			firstArgumentEditBasketProduct:          domain2.BasketProduct{},
-			returnRespRepoEditBasketProduct:         domain2.BasketProduct{},
+			firstArgumentEditBasketProduct:          domain.BasketProduct{},
+			returnRespRepoEditBasketProduct:         domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct:        nil,
 
 			isCallRepositoryMethodGetProduct: false,
@@ -696,22 +696,22 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 		},
 		{
 			name: "Error method EditBasketProduct",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     2,
 			},
-			returnResp: domain2.BasketProduct{
+			returnResp: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnError: domain2.ErrBasketProductNotFound,
+			returnError: domain.ErrBasketProductNotFound,
 
 			isCallRepositoryMethodGetBasketProduct: true,
-			returnRespRepoGetBasketProduct: &domain2.BasketProduct{
+			returnRespRepoGetBasketProduct: &domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -724,13 +724,13 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnErrorRepoDeleteBasketProduct:        nil,
 
 			isCallRepositoryMethodEditBasketProduct: true,
-			firstArgumentEditBasketProduct: domain2.BasketProduct{
+			firstArgumentEditBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnRespRepoEditBasketProduct:  domain2.BasketProduct{},
+			returnRespRepoEditBasketProduct:  domain.BasketProduct{},
 			returnErrorRepoEditBasketProduct: testErr,
 
 			isCallRepositoryMethodGetProduct: false,
@@ -741,13 +741,13 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 		},
 		{
 			name: "Error method GetProduct",
-			inputProduct: domain2.BasketProduct{
+			inputProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     2,
 			},
-			returnResp: domain2.BasketProduct{
+			returnResp: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -756,7 +756,7 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnError: testErr,
 
 			isCallRepositoryMethodGetBasketProduct: true,
-			returnRespRepoGetBasketProduct: &domain2.BasketProduct{
+			returnRespRepoGetBasketProduct: &domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -769,13 +769,13 @@ func TestDecreaseQuantityProductToBasket(t *testing.T) {
 			returnErrorRepoDeleteBasketProduct:        nil,
 
 			isCallRepositoryMethodEditBasketProduct: true,
-			firstArgumentEditBasketProduct: domain2.BasketProduct{
+			firstArgumentEditBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
 				Count:     1,
 			},
-			returnRespRepoEditBasketProduct: domain2.BasketProduct{
+			returnRespRepoEditBasketProduct: domain.BasketProduct{
 				ID:        1,
 				BasketID:  1,
 				ProductID: 1,
@@ -864,7 +864,7 @@ func TestDecreaseDeleteProductToBasket(t *testing.T) {
 		{
 			name:                               "isDeleted = false",
 			inputBasketID:                      1,
-			returnError:                        domain2.ErrBasketProductNotFound,
+			returnError:                        domain.ErrBasketProductNotFound,
 			returnRespRepoDeleteBasketProduct:  false,
 			returnErrorRepoDeleteBasketProduct: nil,
 		},
