@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	domain2 "example.com/m/v2/internal/domain"
+	domain "example.com/m/v2/internal/domain"
 )
 
 type jsonUser struct {
@@ -18,14 +18,14 @@ type jsonRole struct {
 	Name string `json:"name"`
 }
 
-func jsonUserFromUser(u domain2.User) jsonUser {
+func jsonUserFromUser(u domain.User) jsonUser {
 	return jsonUser{ID: u.ID, Login: u.Login, Surname: u.Surname, Name: u.Name, Password: u.Password, Role: u.Role}
 }
 
-func userFromJSONUser(u jsonUser) domain2.User {
-	return domain2.User{ID: u.ID, Login: u.Login, Surname: u.Surname, Name: u.Name, Password: u.Password, Role: u.Role}
+func userFromJSONUser(u jsonUser) domain.User {
+	return domain.User{ID: u.ID, Login: u.Login, Surname: u.Surname, Name: u.Name, Password: u.Password, Role: u.Role}
 }
 
-func jsonRoleFromRole(u domain2.Role) jsonRole {
+func jsonRoleFromRole(u domain.Role) jsonRole {
 	return jsonRole{ID: u.ID, Name: u.Name}
 }

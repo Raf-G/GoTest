@@ -47,9 +47,16 @@ func (res *UserHandlers) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary GetUser
+// @Id 1
+// @version 1.0
+// @produce application/json
+// @name Get user
+// @Param user_id path int true "UserID"
+// @Router /users/{user_id} [get]
+// @Success 200 {object} domain.User
 func (res *UserHandlers) GetUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-
 	id, err := strconv.Atoi(vars["userId"])
 	if err != nil {
 		log.Println(err)
@@ -76,6 +83,13 @@ func (res *UserHandlers) GetUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary GetUsers
+// @Id 2
+// @version 1.0
+// @produce application/json
+// @name Get users
+// @Success 200 {object} []domain.User
+// @Router /users [get]
 func (res *UserHandlers) GetUsers(w http.ResponseWriter, _ *http.Request) {
 	users, err := res.service.GetAll()
 	if err != nil {

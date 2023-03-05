@@ -2,16 +2,32 @@ package main
 
 import (
 	"database/sql"
-	handlers2 "example.com/m/v2/internal/handlers"
-	repository2 "example.com/m/v2/internal/repository"
-	service2 "example.com/m/v2/internal/service"
+	_ "example.com/m/v2/docs"
+	"example.com/m/v2/internal/handlers"
+	"example.com/m/v2/internal/repository"
+	"example.com/m/v2/internal/service"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 	"time"
 )
+
+//	@title			GoTest Swagger API
+//	@version		1.0
+//	@description	Swagger API for Golang GoTest.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	Rovshan Gasanov
+//	@contact.email	rovshan27121@gmail.com
+
+//	@license.name	MIT
+//	@license.url	https://github.com/MartinHeinz/go-project-blueprint/blob/master/LICENSE
+
+//	@host		localhost:8181
+//	@BasePath	/api/
 
 type App struct {
 	address string
@@ -33,29 +49,29 @@ func NewApp() App {
 }
 
 func (app *App) setRouters() {
-	usersRepository := repository2.NewUserRepository(app.db)
-	rolesRepository := repository2.NewRoleRepository(app.db)
-	basketRepository := repository2.NewBasketRepository(app.db)
-	productsRepository := repository2.NewProductRepository(app.db)
-	reviewsRepository := repository2.NewReviewRepository(app.db)
-	ordersRepository := repository2.NewOrderRepository(app.db)
-	statusesRepository := repository2.NewStatusRepository(app.db)
+	usersRepository := repository.NewUserRepository(app.db)
+	rolesRepository := repository.NewRoleRepository(app.db)
+	basketRepository := repository.NewBasketRepository(app.db)
+	productsRepository := repository.NewProductRepository(app.db)
+	reviewsRepository := repository.NewReviewRepository(app.db)
+	ordersRepository := repository.NewOrderRepository(app.db)
+	statusesRepository := repository.NewStatusRepository(app.db)
 
-	usersService := service2.NewUserService(usersRepository)
-	rolesService := service2.NewRoleService(rolesRepository)
-	basketService := service2.NewBasketService(basketRepository, productsRepository)
-	productsService := service2.NewProductService(productsRepository)
-	reviewsService := service2.NewReviewService(reviewsRepository)
-	ordersService := service2.NewOrderService(ordersRepository, basketRepository, productsRepository)
-	satusesService := service2.NewStatusService(statusesRepository)
+	usersService := service.NewUserService(usersRepository)
+	rolesService := service.NewRoleService(rolesRepository)
+	basketService := service.NewBasketService(basketRepository, productsRepository)
+	productsService := service.NewProductService(productsRepository)
+	reviewsService := service.NewReviewService(reviewsRepository)
+	ordersService := service.NewOrderService(ordersRepository, basketRepository, productsRepository)
+	satusesService := service.NewStatusService(statusesRepository)
 
-	usersHandler := handlers2.NewUserHandler(usersService)
-	rolesHandler := handlers2.NewRoleHandler(rolesService)
-	basketHandler := handlers2.NewBasketHandler(basketService)
-	productsHandler := handlers2.NewProductHandler(productsService)
-	reviewsHandler := handlers2.NewReviewHandler(reviewsService)
-	ordersHandler := handlers2.NewOrderHandler(ordersService)
-	statusesHandler := handlers2.NewStatusHandler(satusesService)
+	usersHandler := handlers.NewUserHandler(usersService)
+	rolesHandler := handlers.NewRoleHandler(rolesService)
+	basketHandler := handlers.NewBasketHandler(basketService)
+	productsHandler := handlers.NewProductHandler(productsService)
+	reviewsHandler := handlers.NewReviewHandler(reviewsService)
+	ordersHandler := handlers.NewOrderHandler(ordersService)
+	statusesHandler := handlers.NewStatusHandler(satusesService)
 
 	// Users
 	app.router.HandleFunc("/api/users", usersHandler.Add).Methods("POST")
@@ -96,6 +112,8 @@ func (app *App) setRouters() {
 	app.router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Welcome to Api.")
 	})
+
+	app.router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	fmt.Println("Server listening!")
 }

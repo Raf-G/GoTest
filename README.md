@@ -4,7 +4,9 @@ cd .\internal\repository\
 go generate
 
 # GoTest
-
 cd .\internal\service\
 
 go test
+
+# Generate documentation
+swag init
