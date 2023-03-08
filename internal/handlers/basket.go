@@ -18,8 +18,22 @@ func NewBasketHandler(service service.BasketsService) BasketHandlers {
 	return BasketHandlers{service}
 }
 
-func (ch *BasketHandlers) GetBasket(w http.ResponseWriter, _ *http.Request) {
-	basket, err := ch.service.GetBasket(1)
+// @Summary Get basket
+// @Tags Baskets
+// @produce application/json
+// @Param basket_id path int true "BasketID"
+// @Router /baskets/{basket_id} [get]
+// @Success 200 {object} domain.Basket
+func (ch *BasketHandlers) GetBasket(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["basketId"])
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	basket, err := ch.service.GetBasket(id)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -36,6 +50,12 @@ func (ch *BasketHandlers) GetBasket(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Add product to basket
+// @Tags Baskets
+// @produce application/json
+// @Param product body domain.BasketProduct true "new product added"
+// @Router /baskets/product [post]
+// @Success 200 {object} domain.BasketProduct
 func (res *BasketHandlers) AddProductToBasket(w http.ResponseWriter, r *http.Request) {
 	var b domain.BasketProduct
 
@@ -64,6 +84,12 @@ func (res *BasketHandlers) AddProductToBasket(w http.ResponseWriter, r *http.Req
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Delete product to basket
+// @Tags Baskets
+// @produce application/json
+// @Param basket_id path int true "BasketID"
+// @Router /baskets/product/{basket_id} [delete]
+// @Success 200
 func (res *BasketHandlers) DeleteProductToBasket(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -84,6 +110,14 @@ func (res *BasketHandlers) DeleteProductToBasket(w http.ResponseWriter, r *http.
 	w.WriteHeader(200)
 }
 
+// @Summary Decrease quantity product to basket
+// @Tags Baskets
+// @produce application/json
+// @Param product_id path int true "ProductID"
+// @Param basket_id path int true "BasketID"
+// @Param product body domain.BasketProduct true "new product added"
+// @Router /baskets/product/{product_id}/{basket_id} [put]
+// @Success 200 {object} domain.BasketProduct
 func (res *BasketHandlers) DecreaseQuantityProductToBasket(w http.ResponseWriter, r *http.Request) {
 	var b domain.BasketProduct
 

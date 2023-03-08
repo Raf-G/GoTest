@@ -17,6 +17,12 @@ func NewRoleHandler(service service.RolesService) RoleHandlers {
 	return RoleHandlers{service}
 }
 
+// @Summary Get role
+// @Tags Roles
+// @produce application/json
+// @Param role_id path int true "RoleID"
+// @Router /roles/{role_id} [get]
+// @Success 200 {object} domain.Role
 func (res *RoleHandlers) GetRole(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -46,6 +52,11 @@ func (res *RoleHandlers) GetRole(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Get roles
+// @Tags Roles
+// @produce application/json
+// @Router /roles [get]
+// @Success 200 {object} []domain.Role
 func (ch *RoleHandlers) GetRoles(w http.ResponseWriter, _ *http.Request) {
 	roles, err := ch.service.GetRoleAll()
 	if err != nil {

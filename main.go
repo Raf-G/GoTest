@@ -18,13 +18,9 @@ import (
 //	@title			GoTest Swagger API
 //	@version		1.0
 //	@description	Swagger API for Golang GoTest.
-//	@termsOfService	http://swagger.io/terms/
 
 //	@contact.name	Rovshan Gasanov
 //	@contact.email	rovshan27121@gmail.com
-
-//	@license.name	MIT
-//	@license.url	https://github.com/MartinHeinz/go-project-blueprint/blob/master/LICENSE
 
 //	@host		localhost:8181
 //	@BasePath	/api/
@@ -86,7 +82,7 @@ func (app *App) setRouters() {
 	app.router.HandleFunc("/api/baskets/product", basketHandler.AddProductToBasket).Methods("POST")
 	app.router.HandleFunc("/api/baskets/product/{basketId}/{productId}", basketHandler.DecreaseQuantityProductToBasket).Methods("PUT")
 	app.router.HandleFunc("/api/baskets/product/{productId}", basketHandler.DeleteProductToBasket).Methods("DELETE")
-	app.router.HandleFunc("/api/baskets", basketHandler.GetBasket).Methods("GET")
+	app.router.HandleFunc("/api/baskets/{basketId}", basketHandler.GetBasket).Methods("GET")
 	// Products
 	app.router.HandleFunc("/api/products", productsHandler.AddProduct).Methods("POST")
 	app.router.HandleFunc("/api/products/{productId}", productsHandler.GetProduct).Methods("GET")
@@ -98,7 +94,7 @@ func (app *App) setRouters() {
 	app.router.HandleFunc("/api/reviews/{reviewId}", reviewsHandler.EditReview).Methods("PUT")
 	app.router.HandleFunc("/api/reviews/{reviewId}", reviewsHandler.GetReview).Methods("GET")
 	app.router.HandleFunc("/api/reviews/{reviewId}", reviewsHandler.DeleteReview).Methods("DELETE")
-	app.router.HandleFunc("/api/reviews/{productId}", reviewsHandler.GetReviewsProduct).Methods("GET")
+	app.router.HandleFunc("/api/reviews/product/{productId}", reviewsHandler.GetReviewsProduct).Methods("GET")
 	app.router.HandleFunc("/api/reviews", reviewsHandler.GetReviews).Methods("GET")
 	// Orders
 	app.router.HandleFunc("/api/orders/{userId}", ordersHandler.AddOrder).Methods("POST")

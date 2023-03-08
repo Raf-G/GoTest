@@ -18,6 +18,12 @@ func NewReviewHandler(service service.ReviewsService) ReviewHandlers {
 	return ReviewHandlers{service}
 }
 
+// @Summary Add review
+// @Tags Reviews
+// @produce application/json
+// @Param review body domain.Review true "new review"
+// @Router /reviews [post]
+// @Success 200 {object} domain.Review
 func (res *ReviewHandlers) AddReview(w http.ResponseWriter, r *http.Request) {
 	var review domain.Review
 
@@ -46,6 +52,13 @@ func (res *ReviewHandlers) AddReview(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Edit review
+// @Tags Reviews
+// @produce application/json
+// @Param review_id path int true "ReviewID"
+// @Param review body domain.Review true "new review"
+// @Router /reviews/{review_id} [put]
+// @Success 200 {object} domain.Review
 func (res *ReviewHandlers) EditReview(w http.ResponseWriter, r *http.Request) {
 	var review domain.Review
 
@@ -85,6 +98,12 @@ func (res *ReviewHandlers) EditReview(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Get review
+// @Tags Reviews
+// @produce application/json
+// @Param review_id path int true "ReviewID"
+// @Router /reviews/{review_id} [get]
+// @Success 200 {object} domain.Review
 func (res *ReviewHandlers) GetReview(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -112,6 +131,12 @@ func (res *ReviewHandlers) GetReview(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Delete review
+// @Tags Reviews
+// @produce application/json
+// @Param review_id path int true "ReviewID"
+// @Router /reviews/{review_id} [delete]
+// @Success 200
 func (res *ReviewHandlers) DeleteReview(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -132,6 +157,12 @@ func (res *ReviewHandlers) DeleteReview(w http.ResponseWriter, r *http.Request) 
 	w.WriteHeader(200)
 }
 
+// @Summary Get reviews product
+// @Tags Reviews
+// @produce application/json
+// @Param product_id path int true "ProductID"
+// @Router /reviews/product/{product_id} [get]
+// @Success 200 {object} []domain.Review
 func (res *ReviewHandlers) GetReviewsProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -159,6 +190,11 @@ func (res *ReviewHandlers) GetReviewsProduct(w http.ResponseWriter, r *http.Requ
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Get reviews
+// @Tags Reviews
+// @produce application/json
+// @Router /reviews [get]
+// @Success 200 {object} []domain.Review
 func (res *ReviewHandlers) GetReviews(w http.ResponseWriter, _ *http.Request) {
 	reviews, err := res.service.GetReviews()
 	if err != nil {

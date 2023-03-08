@@ -17,6 +17,12 @@ func NewStatusHandler(service service.StatusesService) StatusHandlers {
 	return StatusHandlers{service}
 }
 
+// @Summary Get status
+// @Tags Statuses
+// @produce application/json
+// @Param status_id path int true "StatusID"
+// @Router /statuses/{status_id} [get]
+// @Success 200 {object} domain.Status
 func (res *StatusHandlers) GetStatus(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -44,6 +50,11 @@ func (res *StatusHandlers) GetStatus(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Get statuses
+// @Tags Statuses
+// @produce application/json
+// @Router /statuses [get]
+// @Success 200 {object} []domain.Status
 func (res *StatusHandlers) GetStatuses(w http.ResponseWriter, _ *http.Request) {
 	statuses, err := res.service.GetStatuses()
 	if err != nil {

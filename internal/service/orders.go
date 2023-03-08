@@ -25,7 +25,7 @@ func NewOrderService(storage repository2.OrdersStorage, storageBasket repository
 }
 
 func (res *OrderService) AddOrder(userID int) (domain.Order, error) {
-	errStr := " order not added"
+	errStr := "order not added"
 
 	_, err := res.storeBasket.GetBasket(userID)
 	if err != nil {

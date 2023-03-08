@@ -1,18 +1,18 @@
 package service
 
 import (
-	domain2 "example.com/m/v2/internal/domain"
+	domain "example.com/m/v2/internal/domain"
 	"example.com/m/v2/internal/repository"
 	"fmt"
 	"github.com/pkg/errors"
 )
 
 type ProductsService interface {
-	AddProduct(domain2.Product) (domain2.Product, error)
-	GetProduct(int) (domain2.Product, error)
-	EditProduct(domain2.Product) (domain2.Product, error)
+	AddProduct(domain.Product) (domain.Product, error)
+	GetProduct(int) (domain.Product, error)
+	EditProduct(domain.Product) (domain.Product, error)
 	DeleteProduct(int) error
-	GetAllProducts() ([]domain2.Product, error)
+	GetAllProducts() ([]domain.Product, error)
 }
 
 type ProductService struct {
@@ -23,7 +23,7 @@ func NewProductService(storage repository.ProductsStorage) *ProductService {
 	return &ProductService{storage}
 }
 
-func (res *ProductService) AddProduct(p domain2.Product) (domain2.Product, error) {
+func (res *ProductService) AddProduct(p domain.Product) (domain.Product, error) {
 	errStr := "product not added"
 
 	productDB, err := res.store.AddProduct(p)
@@ -32,28 +32,28 @@ func (res *ProductService) AddProduct(p domain2.Product) (domain2.Product, error
 	}
 
 	if productDB == nil {
-		return p, errors.Wrap(domain2.ErrProductNotCreated, errStr)
+		return p, errors.Wrap(domain.ErrProductNotCreated, errStr)
 	}
 
 	return *productDB, nil
 }
 
-func (res *ProductService) GetProduct(id int) (domain2.Product, error) {
+func (res *ProductService) GetProduct(id int) (domain.Product, error) {
 	errStr := "product not fetched"
 	product, err := res.store.GetProduct(id)
 	if err != nil {
-		return domain2.Product{}, errors.Wrap(err, errStr)
+		return domain.Product{}, errors.Wrap(err, errStr)
 	}
 
 	return *product, nil
 }
 
-func (res *ProductService) EditProduct(p domain2.Product) (domain2.Product, error) {
+func (res *ProductService) EditProduct(p domain.Product) (domain.Product, error) {
 	errStr := "product not edit"
 
 	newProduct, err := res.store.EditProduct(p)
 	if err != nil {
-		return domain2.Product{}, errors.Wrap(domain2.ErrUserNotFound, errStr)
+		return domain.Product{}, errors.Wrap(domain.ErrUserNotFound, errStr)
 	}
 
 	return newProduct, nil
@@ -68,13 +68,13 @@ func (res *ProductService) DeleteProduct(productID int) error {
 	}
 
 	if !isDeleted {
-		return errors.Wrap(domain2.ErrProductNotFound, errStr)
+		return errors.Wrap(domain.ErrProductNotFound, errStr)
 	}
 
 	return nil
 }
 
-func (res *ProductService) GetAllProducts() ([]domain2.Product, error) {
+func (res *ProductService) GetAllProducts() ([]domain.Product, error) {
 	errStr := "products not fetched"
 	c, err := res.store.GetProducts()
 	if err != nil {

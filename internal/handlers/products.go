@@ -18,6 +18,12 @@ func NewProductHandler(service service.ProductsService) ProductHandlers {
 	return ProductHandlers{service}
 }
 
+// @Summary Add product
+// @Tags Products
+// @produce application/json
+// @Param user body domain.Product true "new product"
+// @Router /products [post]
+// @Success 200 {object} domain.Product
 func (res *ProductHandlers) AddProduct(w http.ResponseWriter, r *http.Request) {
 	var p domain.Product
 
@@ -46,6 +52,12 @@ func (res *ProductHandlers) AddProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Get product
+// @Tags Products
+// @produce application/json
+// @Param product_id path int true "ProductID"
+// @Router /products/{product_id} [get]
+// @Success 200 {object} domain.Product
 func (ch *ProductHandlers) GetProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
@@ -72,6 +84,11 @@ func (ch *ProductHandlers) GetProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Get products
+// @Tags Products
+// @produce application/json
+// @Router /products [get]
+// @Success 200 {object} []domain.Product
 func (ch *ProductHandlers) GetProducts(w http.ResponseWriter, _ *http.Request) {
 	products, err := ch.service.GetAllProducts()
 	if err != nil {
@@ -90,6 +107,13 @@ func (ch *ProductHandlers) GetProducts(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Edit product
+// @Tags Products
+// @produce application/json
+// @Param product_id path int true "ProductID"
+// @Param product body domain.Product true "edit product"
+// @Router /products/{product_id} [put]
+// @Success 200 {object} domain.Product
 func (res *ProductHandlers) EditProduct(w http.ResponseWriter, r *http.Request) {
 	var p domain.Product
 
@@ -128,6 +152,12 @@ func (res *ProductHandlers) EditProduct(w http.ResponseWriter, r *http.Request) 
 	w.Header().Set("Content-Type", "application/json")
 }
 
+// @Summary Delete product
+// @Tags Products
+// @produce application/jsondelete
+// @Param product_id path int true "ProductID"
+// @Router /products/{product_id} [delete]
+// @Success 200
 func (res *ProductHandlers) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 

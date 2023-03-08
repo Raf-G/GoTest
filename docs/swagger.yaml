@@ -1,18 +1,118 @@
 basePath: /api/
 definitions:
-  domain.User:
+  domain.Basket:
+    properties:
+      id:
+        example: 0
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/domain.BasketProduct'
+        type: array
+      total_price:
+        example: 400
+        type: integer
+      user_id:
+        example: 1
+        type: integer
+    type: object
+  domain.BasketProduct:
+    properties:
+      basket_id:
+        example: 1
+        type: integer
+      count:
+        example: 2
+        type: integer
+      id:
+        example: 0
+        type: integer
+      product_id:
+        example: 1
+        type: integer
+      total_price:
+        example: 400
+        type: integer
+    type: object
+  domain.Order:
     properties:
       id:
         type: integer
+      status_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  domain.Product:
+    properties:
+      description:
+        example: test description
+        type: string
+      id:
+        example: 0
+        type: integer
+      name:
+        example: testProduct
+        type: string
+      price:
+        example: 300
+        type: integer
+    type: object
+  domain.Review:
+    properties:
+      description:
+        example: test description
+        type: string
+      grade:
+        example: 5
+        type: integer
+      id:
+        example: 0
+        type: integer
+      product_id:
+        example: 1
+        type: integer
+      user_id:
+        example: 1
+        type: integer
+    type: object
+  domain.Role:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: administrator
+        type: string
+    type: object
+  domain.Status:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: В обработке
+        type: string
+    type: object
+  domain.User:
+    properties:
+      id:
+        example: 0
+        type: integer
       login:
+        example: testLogin
         type: string
       name:
+        example: nameTest
         type: string
       password:
+        example: qweqwe122
         type: string
       role:
+        example: 1
         type: integer
       surname:
+        example: surnameTest
         type: string
     type: object
 host: localhost:8181
@@ -21,16 +121,418 @@ info:
     email: rovshan27121@gmail.com
     name: Rovshan Gasanov
   description: Swagger API for Golang GoTest.
-  license:
-    name: MIT
-    url: https://github.com/MartinHeinz/go-project-blueprint/blob/master/LICENSE
-  termsOfService: http://swagger.io/terms/
   title: GoTest Swagger API
   version: "1.0"
 paths:
+  /baskets/{basket_id}:
+    get:
+      parameters:
+      - description: BasketID
+        in: path
+        name: basket_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Basket'
+      summary: Get basket
+      tags:
+      - Baskets
+  /baskets/product:
+    post:
+      parameters:
+      - description: new product added
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/domain.BasketProduct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.BasketProduct'
+      summary: Add product to basket
+      tags:
+      - Baskets
+  /baskets/product/{basket_id}:
+    delete:
+      parameters:
+      - description: BasketID
+        in: path
+        name: basket_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete product to basket
+      tags:
+      - Baskets
+  /baskets/product/{product_id}/{basket_id}:
+    put:
+      parameters:
+      - description: ProductID
+        in: path
+        name: product_id
+        required: true
+        type: integer
+      - description: BasketID
+        in: path
+        name: basket_id
+        required: true
+        type: integer
+      - description: new product added
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/domain.BasketProduct'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.BasketProduct'
+      summary: Decrease quantity product to basket
+      tags:
+      - Baskets
+  /orders:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Order'
+            type: array
+      summary: Get orders
+      tags:
+      - Orders
+  /orders/{order_id}:
+    delete:
+      parameters:
+      - description: OrderID
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete order
+      tags:
+      - Orders
+    get:
+      parameters:
+      - description: OrderID
+        in: path
+        name: order_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Order'
+      summary: Get order
+      tags:
+      - Orders
+  /orders/{user_id}:
+    post:
+      parameters:
+      - description: UserID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Order'
+      summary: Add order
+      tags:
+      - Orders
+  /products:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Product'
+            type: array
+      summary: Get products
+      tags:
+      - Products
+    post:
+      parameters:
+      - description: new product
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Product'
+      summary: Add product
+      tags:
+      - Products
+  /products/{product_id}:
+    delete:
+      parameters:
+      - description: ProductID
+        in: path
+        name: product_id
+        required: true
+        type: integer
+      produces:
+      - application/jsondelete
+      responses:
+        "200":
+          description: OK
+      summary: Delete product
+      tags:
+      - Products
+    get:
+      parameters:
+      - description: ProductID
+        in: path
+        name: product_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Product'
+      summary: Get product
+      tags:
+      - Products
+    put:
+      parameters:
+      - description: ProductID
+        in: path
+        name: product_id
+        required: true
+        type: integer
+      - description: edit product
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Product'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Product'
+      summary: Edit product
+      tags:
+      - Products
+  /reviews:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Review'
+            type: array
+      summary: Get reviews
+      tags:
+      - Reviews
+    post:
+      parameters:
+      - description: new review
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Review'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Review'
+      summary: Add review
+      tags:
+      - Reviews
+  /reviews/{review_id}:
+    delete:
+      parameters:
+      - description: ReviewID
+        in: path
+        name: review_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete review
+      tags:
+      - Reviews
+    get:
+      parameters:
+      - description: ReviewID
+        in: path
+        name: review_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Review'
+      summary: Get review
+      tags:
+      - Reviews
+    put:
+      parameters:
+      - description: ReviewID
+        in: path
+        name: review_id
+        required: true
+        type: integer
+      - description: new review
+        in: body
+        name: review
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Review'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Review'
+      summary: Edit review
+      tags:
+      - Reviews
+  /reviews/product/{product_id}:
+    get:
+      parameters:
+      - description: ProductID
+        in: path
+        name: product_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Review'
+            type: array
+      summary: Get reviews product
+      tags:
+      - Reviews
+  /roles:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Role'
+            type: array
+      summary: Get roles
+      tags:
+      - Roles
+  /roles/{role_id}:
+    get:
+      parameters:
+      - description: RoleID
+        in: path
+        name: role_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Role'
+      summary: Get role
+      tags:
+      - Roles
+  /statuses:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Status'
+            type: array
+      summary: Get statuses
+      tags:
+      - Statuses
+  /statuses/{status_id}:
+    get:
+      parameters:
+      - description: StatusID
+        in: path
+        name: status_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Status'
+      summary: Get status
+      tags:
+      - Statuses
   /users:
     get:
-      operationId: "2"
       produces:
       - application/json
       responses:
@@ -40,10 +542,44 @@ paths:
             items:
               $ref: '#/definitions/domain.User'
             type: array
-      summary: GetUsers
+      summary: Get users
+      tags:
+      - Users
+    post:
+      parameters:
+      - description: new user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+      summary: Add user
+      tags:
+      - Users
   /users/{user_id}:
+    delete:
+      parameters:
+      - description: UserID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+      summary: Delete user
+      tags:
+      - Users
     get:
-      operationId: "1"
       parameters:
       - description: UserID
         in: path
@@ -57,5 +593,30 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.User'
-      summary: GetUser
+      summary: Get user
+      tags:
+      - Users
+    put:
+      parameters:
+      - description: UserID
+        in: path
+        name: user_id
+        required: true
+        type: integer
+      - description: edit user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+      summary: Edit user
+      tags:
+      - Users
 swagger: "2.0"
