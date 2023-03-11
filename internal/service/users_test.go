@@ -1,7 +1,7 @@
 package service
 
 import (
-	domain2 "example.com/m/v2/internal/domain"
+	"example.com/m/v2/internal/domain"
 	mock_domain "example.com/m/v2/internal/repository/mocks"
 	"fmt"
 	"github.com/golang/mock/gomock"
@@ -15,8 +15,8 @@ var testErr = errors.New("test error")
 func TestAddUser(t *testing.T) {
 	testTable := []struct {
 		name                   string
-		inputUser              domain2.User
-		returnUser             domain2.User
+		inputUser              domain.User
+		returnUser             domain.User
 		returnError            error
 		isCallRepositoryMethod bool
 		returnErrorRepo        error
@@ -24,14 +24,14 @@ func TestAddUser(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			inputUser: domain2.User{
+			inputUser: domain.User{
 				Login:    "testingLogin",
 				Surname:  "testingSurname",
 				Name:     "testungName",
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser: domain2.User{
+			returnUser: domain.User{
 				ID:       1,
 				Login:    "testingLogin",
 				Surname:  "testingSurname",
@@ -46,30 +46,30 @@ func TestAddUser(t *testing.T) {
 		},
 		{
 			name: "no login",
-			inputUser: domain2.User{
+			inputUser: domain.User{
 				Login:    "",
 				Surname:  "testingSurname",
 				Name:     "testungName",
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser:             domain2.User{},
-			returnError:            domain2.ErrNoLogin,
+			returnUser:             domain.User{},
+			returnError:            domain.ErrNoLogin,
 			isCallRepositoryMethod: false,
 			returnErrorRepo:        nil,
 			isCheckError:           true,
 		},
 		{
 			name: "no surname",
-			inputUser: domain2.User{
+			inputUser: domain.User{
 				Login:    "tetetet",
 				Surname:  "",
 				Name:     "testungName",
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser:             domain2.User{},
-			returnError:            domain2.ErrNoSurname,
+			returnUser:             domain.User{},
+			returnError:            domain.ErrNoSurname,
 			isCallRepositoryMethod: false,
 			returnErrorRepo:        nil,
 			isCheckError:           true,
@@ -107,15 +107,15 @@ func TestGetUser(t *testing.T) {
 		name            string
 		idUser          int
 		returnError     error
-		returnResp      domain2.User
-		returnRespRepo  *domain2.User
+		returnResp      domain.User
+		returnRespRepo  *domain.User
 		returnErrorRepo error
 		isCheckError    bool
 	}{
 		{
 			name:   "ok",
 			idUser: 1,
-			returnRespRepo: &domain2.User{
+			returnRespRepo: &domain.User{
 				ID:       1,
 				Login:    "testingLogin",
 				Surname:  "testingSurname",
@@ -123,7 +123,7 @@ func TestGetUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnResp: domain2.User{
+			returnResp: domain.User{
 				ID:       1,
 				Login:    "testingLogin",
 				Surname:  "testingSurname",
@@ -139,7 +139,7 @@ func TestGetUser(t *testing.T) {
 			name:            "error",
 			idUser:          1,
 			returnRespRepo:  nil,
-			returnResp:      domain2.User{},
+			returnResp:      domain.User{},
 			returnError:     testErr,
 			returnErrorRepo: testErr,
 			isCheckError:    true,
@@ -148,8 +148,8 @@ func TestGetUser(t *testing.T) {
 			name:            "no user",
 			idUser:          1,
 			returnRespRepo:  nil,
-			returnResp:      domain2.User{},
-			returnError:     domain2.ErrUserNotFound,
+			returnResp:      domain.User{},
+			returnError:     domain.ErrUserNotFound,
 			returnErrorRepo: nil,
 			isCheckError:    true,
 		},
@@ -183,18 +183,18 @@ func TestGetUsers(t *testing.T) {
 	testTable := []struct {
 		name            string
 		returnError     error
-		returnResp      []domain2.User
-		returnRespRepo  []domain2.User
+		returnResp      []domain.User
+		returnRespRepo  []domain.User
 		returnErrorRepo error
 		isCheckError    bool
 	}{
 		{
 			name: "ok",
-			returnRespRepo: []domain2.User{
+			returnRespRepo: []domain.User{
 				{ID: 1, Login: "testingLogin", Surname: "testingSurname", Name: "testungName", Role: 1, Password: "qeqwe12"},
 				{ID: 2, Login: "testingLogin2", Surname: "testingSurname2", Name: "testungName2", Role: 2, Password: "qeqwe122"},
 			},
-			returnResp: []domain2.User{
+			returnResp: []domain.User{
 				{ID: 1, Login: "testingLogin", Surname: "testingSurname", Name: "testungName", Role: 1, Password: "qeqwe12"},
 				{ID: 2, Login: "testingLogin2", Surname: "testingSurname2", Name: "testungName2", Role: 2, Password: "qeqwe122"},
 			},
@@ -240,17 +240,17 @@ func TestGetUsers(t *testing.T) {
 func TestEditUser(t *testing.T) {
 	testTable := []struct {
 		name                   string
-		inputUser              domain2.User
-		returnUser             domain2.User
+		inputUser              domain.User
+		returnUser             domain.User
 		returnError            error
 		isCallRepositoryMethod bool
-		returnRepo             domain2.User
+		returnRepo             domain.User
 		returnErrorRepo        error
 		isCheckError           bool
 	}{
 		{
 			name: "ok",
-			inputUser: domain2.User{
+			inputUser: domain.User{
 				ID:       1,
 				Login:    "testingLogin",
 				Surname:  "testingSurname",
@@ -258,7 +258,7 @@ func TestEditUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser: domain2.User{
+			returnUser: domain.User{
 				ID:       1,
 				Login:    "testingLogin",
 				Surname:  "testingSurname2",
@@ -268,7 +268,7 @@ func TestEditUser(t *testing.T) {
 			},
 			returnError:            nil,
 			isCallRepositoryMethod: true,
-			returnRepo: domain2.User{
+			returnRepo: domain.User{
 				ID:       1,
 				Login:    "testingLogin",
 				Surname:  "testingSurname2",
@@ -281,7 +281,7 @@ func TestEditUser(t *testing.T) {
 		},
 		{
 			name: "error",
-			inputUser: domain2.User{
+			inputUser: domain.User{
 				ID:       1,
 				Login:    "grgrgrgr",
 				Surname:  "testingSurname",
@@ -289,15 +289,15 @@ func TestEditUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser:             domain2.User{},
-			returnError:            domain2.ErrUserNotEdited,
+			returnUser:             domain.User{},
+			returnError:            domain.ErrUserNotEdited,
 			isCallRepositoryMethod: true,
 			returnErrorRepo:        testErr,
 			isCheckError:           true,
 		},
 		{
 			name: "no login",
-			inputUser: domain2.User{
+			inputUser: domain.User{
 				ID:       1,
 				Login:    "",
 				Surname:  "testingSurname",
@@ -305,15 +305,15 @@ func TestEditUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser:             domain2.User{},
-			returnError:            domain2.ErrNoLogin,
+			returnUser:             domain.User{},
+			returnError:            domain.ErrNoLogin,
 			isCallRepositoryMethod: false,
 			returnErrorRepo:        testErr,
 			isCheckError:           true,
 		},
 		{
 			name: "no surname",
-			inputUser: domain2.User{
+			inputUser: domain.User{
 				ID:       1,
 				Login:    "qwqwqwwq",
 				Surname:  "",
@@ -321,8 +321,8 @@ func TestEditUser(t *testing.T) {
 				Role:     1,
 				Password: "qeqwe12",
 			},
-			returnUser:             domain2.User{},
-			returnError:            domain2.ErrNoSurname,
+			returnUser:             domain.User{},
+			returnError:            domain.ErrNoSurname,
 			isCallRepositoryMethod: false,
 			returnErrorRepo:        testErr,
 			isCheckError:           true,
