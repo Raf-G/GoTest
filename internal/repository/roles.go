@@ -1,8 +1,11 @@
 package repository
 
 import (
+	"context"
 	"database/sql"
 	"example.com/m/v2/internal/domain"
+	"fmt"
+	"github.com/redis/go-redis/v9"
 )
 
 //go:generate mockgen -source=roles.go -destination=mocks/roles.go
@@ -13,11 +16,12 @@ type RolesStorage interface {
 }
 
 type RoleRepository struct {
-	db *sql.DB
+	db          *sql.DB
+	redisClient *redis.Client
 }
 
-func NewRoleRepository(db *sql.DB) *RoleRepository {
-	return &RoleRepository{db}
+func NewRoleRepository(db *sql.DB, redisClient *redis.Client) *RoleRepository {
+	return &RoleRepository{db, redisClient}
 }
 
 func (res *RoleRepository) GetRole(id int) (*domain.Role, error) {
@@ -32,6 +36,19 @@ func (res *RoleRepository) GetRole(id int) (*domain.Role, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	ctx := context.Background()
+
+	err = res.redisClient.Set(ctx, "key", "value", 0).Err()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	val, err := res.redisClient.Get(ctx, "key").Result()
+	if err != nil {
+		fmt.Println("dont find")
+	}
+	fmt.Println("key", val)
 
 	return &role, nil
 }

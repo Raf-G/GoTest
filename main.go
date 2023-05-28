@@ -9,6 +9,7 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
+	"github.com/redis/go-redis/v9"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
@@ -26,9 +27,10 @@ import (
 //	@BasePath	/api/
 
 type App struct {
-	address string
-	router  *mux.Router
-	db      *sql.DB
+	address     string
+	router      *mux.Router
+	db          *sql.DB
+	redisClient *redis.Client
 }
 
 func NewApp() App {
@@ -38,7 +40,36 @@ func NewApp() App {
 	}
 
 	router := mux.NewRouter()
-	app := App{":8181", router, db}
+
+	//ctx := context.Background()
+
+	rdb := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "", // no password set
+		DB:       0,  // use default DB
+	})
+
+	//err = rdb.Set(ctx, "key", "value", 0).Err()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//
+	//val, err := rdb.Get(ctx, "key").Result()
+	//if err != nil {
+	//	panic(err)
+	//}
+	//fmt.Println("key", val)
+	//
+	//val2, err := rdb.Get(ctx, "key2").Result()
+	//if err == redis.Nil {
+	//	fmt.Println("key2 does not exist")
+	//} else if err != nil {
+	//	panic(err)
+	//} else {
+	//	fmt.Println("key2", val2)
+	//}
+
+	app := App{":8181", router, db, rdb}
 	app.setRouters()
 
 	return app
@@ -46,7 +77,7 @@ func NewApp() App {
 
 func (app *App) setRouters() {
 	usersRepository := repository.NewUserRepository(app.db)
-	rolesRepository := repository.NewRoleRepository(app.db)
+	rolesRepository := repository.NewRoleRepository(app.db, app.redisClient)
 	basketRepository := repository.NewBasketRepository(app.db)
 	productsRepository := repository.NewProductRepository(app.db)
 	reviewsRepository := repository.NewReviewRepository(app.db)
@@ -127,6 +158,7 @@ func (app *App) Run() {
 	if err != nil {
 		log.Println(err)
 	}
+
 	log.Println("Start server")
 }
 
@@ -140,5 +172,6 @@ func (app *App) Stop() {
 func main() {
 	api := NewApp()
 	api.Run()
+
 	defer api.Stop()
 }
